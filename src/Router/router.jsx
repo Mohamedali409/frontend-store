@@ -2,12 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
 import Products from "../pages/Products";
-import SingleProduct from "../pages/SingleProduct";
 import Profile from "../pages/Profile";
 import AuthPage from "../pages/AuthPage";
 import NotFound from "../pages/NotFound";
 import { ProtectedRoute, AuthRoute } from "../components/AuthRoutes";
 import Cart from "../pages/Cart";
+import ProductDetails from "../pages/ProductDetails";
 
 // تأكد إن الاسم هنا "router" سمول
 export const router = createBrowserRouter([
@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
 
       // مسارات المنتجات
       { path: "products", element: <Products /> },
-      { path: "products/:productId", element: <SingleProduct /> },
+      { path: "product/:id", element: <ProductDetails /> },
 
       // مسار تسجيل الدخول (محمي: متاح فقط لغير المسجلين)
       {
