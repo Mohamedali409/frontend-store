@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import "flowbite/src/themes/default";
+
+* {
+  scrollbar-width: none;
+}
+
+/* src/index.css */
+#nprogress .bar {
+  background: #fa8232 !important; /* لون البرتقالي بتاعك */
+  height: 3px !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #fa8232 !important;
+  border-left-color: #fa8232 !important;
+}
