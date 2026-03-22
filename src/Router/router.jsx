@@ -8,6 +8,9 @@ import NotFound from "../pages/NotFound";
 import { ProtectedRoute, AuthRoute } from "../components/AuthRoutes";
 import Cart from "../pages/Cart";
 import ProductDetails from "../pages/ProductDetails";
+import About from "../pages/About";
+import Support from "../pages/Support";
+import AuthSuccess from "../pages/AuthSuccess";
 
 // تأكد إن الاسم هنا "router" سمول
 export const router = createBrowserRouter([
@@ -17,11 +20,12 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
 
-      // مسارات المنتجات
       { path: "products", element: <Products /> },
       { path: "product/:id", element: <ProductDetails /> },
 
-      // مسار تسجيل الدخول (محمي: متاح فقط لغير المسجلين)
+      { path: "about", element: <About /> },
+      { path: "customer-support", element: <Support /> },
+
       {
         path: "login",
         element: (
@@ -31,9 +35,13 @@ export const router = createBrowserRouter([
         ),
       },
 
-      // مسار البروفايل (محمي: متاح فقط للمسجلين)
       {
-        path: "profile", // شلنا الـ :userId
+        path: "auth/callback",
+        element: <AuthSuccess />, // شيلنا الـ AuthRoute والكومنت
+      },
+
+      {
+        path: "profile",
         element: (
           <ProtectedRoute>
             <Profile />
@@ -41,9 +49,8 @@ export const router = createBrowserRouter([
         ),
       },
 
-      // مسار سلة المشتريات (محمي: متاح فقط للمسجلين)
       {
-        path: "cart", // شلنا الـ :userId
+        path: "cart",
         element: (
           <ProtectedRoute>
             <Cart />
@@ -51,7 +58,6 @@ export const router = createBrowserRouter([
         ),
       },
 
-      // صفحة 404 لأي مسار غير موجود
       { path: "*", element: <NotFound /> },
     ],
   },

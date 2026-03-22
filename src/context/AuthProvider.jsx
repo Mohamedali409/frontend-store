@@ -26,13 +26,11 @@ export default function AuthProvider({ children }) {
       localStorage.setItem("token", newToken);
       localStorage.setItem("user", JSON.stringify(userData));
 
-      // رسالة نجاح
       toast.success(`Welcome back, ${userData.name}!`);
       return { success: true };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Email or password incorrect";
-      // رسالة خطأ
       toast.error(errorMessage);
       return { success: false };
     } finally {
@@ -40,7 +38,6 @@ export default function AuthProvider({ children }) {
     }
   };
 
-  // دالة إنشاء حساب جديد
   const register = async (name, email, password, confirmPassword) => {
     try {
       setLoadingAuth(true);
@@ -80,6 +77,17 @@ export default function AuthProvider({ children }) {
     toast.info("Logged out successfully");
   };
 
+  // الدالة الجديدة الخاصة بحفظ توكن جوجل
+  const handleGoogleCallback = (newToken) => {
+    setLoadingAuth(true);
+    setToken(newToken);
+    localStorage.setItem("token", newToken);
+
+    // مؤقتاً لحد ما نعمل Endpoint يجيب بيانات اليوزر بناءً على التوكن
+    toast.success("Welcome back with Google!");
+    setLoadingAuth(false);
+  };
+
   if (showSplash) {
     return <FullPageLoader onFinished={() => setShowSplash(false)} />;
   }
@@ -94,6 +102,7 @@ export default function AuthProvider({ children }) {
         login,
         register,
         logout,
+        handleGoogleCallback, // تم التمرير هنا
       }}
     >
       {children}

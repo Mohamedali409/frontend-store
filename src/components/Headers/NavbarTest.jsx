@@ -22,6 +22,7 @@ import {
   UserCircle,
   Package,
   ChevronRight,
+  Info, // أيقونة إضافية لصفحة About
 } from "lucide-react";
 
 const mockCategories = [
@@ -41,8 +42,6 @@ export default function Header() {
   const [userOpen, setUserOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // 🚀 State لعدد الأصناف الفريدة في السلة
   const [cartCount, setCartCount] = useState(0);
 
   const userRef = useRef(null);
@@ -60,7 +59,7 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🚀 دالة جلب عدد المنتجات بناءً على هيكلة الـ Backend الجديدة
+  // جلب عدد المنتجات
   const fetchCartCount = async () => {
     if (!isAuthenticated) {
       setCartCount(0);
@@ -68,9 +67,7 @@ export default function Header() {
     }
     try {
       const response = await api.get("/cart");
-      // الباك إند بيرجع cart وبداخله items
       if (response.data.success && response.data.cart) {
-        // نعد عدد الأصناف (Items) الموجودة في المصفوفة
         setCartCount(response.data.cart.items.length || 0);
       }
     } catch (error) {
@@ -78,18 +75,11 @@ export default function Header() {
     }
   };
 
-  // 🚀 التحديث التلقائي عند حدوث تغيير في السلة
   useEffect(() => {
     fetchCartCount();
-
-    const handleCartUpdate = () => {
-      fetchCartCount();
-    };
-
+    const handleCartUpdate = () => fetchCartCount();
     window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => {
-      window.removeEventListener("cartUpdated", handleCartUpdate);
-    };
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, [isAuthenticated]);
 
   const handleSearch = () => {
@@ -145,7 +135,7 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Search */}
+        {/* Search Input */}
         <div className="hidden md:flex flex-1 max-w-2xl relative">
           <input
             type="text"
@@ -163,7 +153,7 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Icons */}
+        {/* Action Icons */}
         <div className="flex items-center gap-2 md:gap-5">
           <Link
             to="/wishlist"
@@ -184,16 +174,28 @@ export default function Header() {
             )}
           </Link>
 
-          {/* User Account */}
+          {/* User Account Section */}
           <div className="relative" ref={userRef}>
             <button
               onClick={() => setUserOpen(!userOpen)}
               className="flex items-center gap-2 p-1 md:bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all border border-transparent md:border-gray-100"
             >
               <div
-                className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center ${isAuthenticated ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-500"}`}
+                className={`w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden flex items-center justify-center ${isAuthenticated ? "bg-orange-500" : "bg-gray-200"}`}
               >
-                <User size={18} strokeWidth={2.5} />
+                {isAuthenticated && user?.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User
+                    size={18}
+                    className={isAuthenticated ? "text-white" : "text-gray-500"}
+                    strokeWidth={2.5}
+                  />
+                )}
               </div>
               <ChevronDown
                 size={14}
@@ -211,12 +213,14 @@ export default function Header() {
                 >
                   {isAuthenticated ? (
                     <>
-                      <div className="px-5 py-3 border-b border-gray-50 mb-1">
+                      <div className="px-5 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
                         <p className="text-sm font-bold text-gray-900 truncate">
-                          {user?.name}
+                          {" "}
+                          {user?.name}{" "}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">
-                          {user?.email}
+                        <p className="text-[11px] text-gray-500 truncate">
+                          {" "}
+                          {user?.email}{" "}
                         </p>
                       </div>
                       <Link
@@ -239,7 +243,7 @@ export default function Header() {
                           setUserOpen(false);
                           setCartCount(0);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold border-t border-gray-50"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold border-t border-gray-50 mt-1"
                       >
                         <LogOut size={18} /> Sign Out
                       </button>
@@ -249,7 +253,7 @@ export default function Header() {
                       <Link
                         to="/login"
                         onClick={() => setUserOpen(false)}
-                        className="block w-full bg-orange-500 text-white text-center py-2.5 rounded-xl font-bold hover:bg-orange-600"
+                        className="block w-full bg-orange-500 text-white text-center py-2.5 rounded-xl font-bold hover:bg-orange-600 shadow-md"
                       >
                         Login / Register
                       </Link>
@@ -262,7 +266,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Categories & Bottom Nav */}
+      {/* 3. Categories & Navigation Bar */}
       <div className="hidden md:block border-t border-gray-50">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
@@ -310,8 +314,12 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
+            {/* Desktop Navigation مع إضافة About Us */}
             <nav className="flex gap-8 text-sm font-semibold text-gray-500">
-              <Link to="/products" className="hover:text-orange-500">
+              <Link
+                to="/products"
+                className="hover:text-orange-500 transition-colors"
+              >
                 Shop All
               </Link>
               <Link
@@ -320,6 +328,12 @@ export default function Header() {
               >
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>{" "}
                 Hot Deals
+              </Link>
+              <Link
+                to="/about"
+                className="hover:text-orange-500 transition-colors"
+              >
+                About Us
               </Link>
               <Link to="/customer-support" className="hover:text-orange-500">
                 Support
@@ -333,7 +347,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 📱 Mobile Menu (Simplified) */}
+      {/* 4. Mobile Side Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -348,27 +362,86 @@ export default function Header() {
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              className="fixed top-0 left-0 bottom-0 w-[80%] max-w-xs bg-white z-[120] p-6"
+              className="fixed top-0 left-0 bottom-0 w-[80%] max-w-xs bg-white z-[120] p-6 shadow-2xl"
             >
-              <div className="flex justify-between items-center mb-8">
-                <span className="text-orange-500 font-black text-xl italic">
+              <div className="flex justify-between items-center mb-8 border-b pb-4">
+                <span className="text-orange-500 font-black text-2xl italic tracking-tighter">
                   AlyShope
                 </span>
-                <X
+                <div
+                  className="bg-gray-100 p-2 rounded-full cursor-pointer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-gray-500 cursor-pointer"
-                />
+                >
+                  <X size={20} className="text-gray-500" />
+                </div>
               </div>
-              <div className="flex flex-col gap-4 font-bold text-gray-700">
-                <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+              <div className="flex flex-col gap-6 font-bold text-gray-800">
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 hover:text-orange-500"
+                >
                   Home
                 </Link>
-                <Link to="/products" onClick={() => setMobileMenuOpen(false)}>
+                <Link
+                  to="/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-orange-500"
+                >
                   Shop
                 </Link>
-                <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
-                  Cart ({cartCount})
+                {/* لينك About Us في الموبايل */}
+                <Link
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 hover:text-orange-500"
+                >
+                  About Us
                 </Link>
+                <Link
+                  to="/cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex justify-between items-center hover:text-orange-500"
+                >
+                  Cart{" "}
+                  <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs">
+                    {cartCount}
+                  </span>
+                </Link>
+
+                <hr className="border-gray-100" />
+
+                {!isAuthenticated ? (
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="mt-4 bg-orange-500 text-white text-center py-3 rounded-xl shadow-lg shadow-orange-100"
+                  >
+                    Login / Register
+                  </Link>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-xs text-gray-400 uppercase tracking-widest">
+                      Account
+                    </p>
+                    <Link
+                      to="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-sm"
+                    >
+                      My Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="text-red-500 text-sm flex items-center gap-2 pt-2"
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </>

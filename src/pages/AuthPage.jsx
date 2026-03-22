@@ -7,17 +7,14 @@ export default function AuthPage() {
   const { login, register, loadingAuth } = useAuth();
   const navigate = useNavigate();
 
-  // State عشان نحدد إحنا في صفحة الدخول ولا التسجيل (افتراضياً دخول)
   const [isLogin, setIsLogin] = useState(true);
 
-  // States لبيانات الفورم
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  // States لإظهار وإخفاء الباسورد
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -28,16 +25,13 @@ export default function AuthPage() {
     setErrorMsg("");
 
     if (isLogin) {
-      // لوجن
       const result = await login(email, password);
       if (result.success) {
-        alert("تم تسجيل الدخول بنجاح!");
-        // window.location.href = '/';
+        navigate("/");
       } else {
         setErrorMsg(result.message);
       }
     } else {
-      // تسجيل جديد
       if (password !== confirmPassword) {
         return setErrorMsg("كلمات المرور غير متطابقة!");
       }
@@ -47,8 +41,7 @@ export default function AuthPage() {
 
       const result = await register(name, email, password, confirmPassword);
       if (result.success) {
-        alert("تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.");
-        setIsLogin(true); // نرجعه لصفحة اللوجن بعد ما يسجل
+        setIsLogin(true);
         navigate("/");
       } else {
         setErrorMsg(result.message);
@@ -56,10 +49,15 @@ export default function AuthPage() {
     }
   };
 
+  // دالة توجيه المستخدم لصفحة جوجل في الباك إند
+  const handleGoogleAuth = () => {
+    // غير 5000 لو الباك إند بتاعك شغال على بورت مختلف
+    window.location.href = "http://localhost:3000/api/auth/google";
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-md shadow-sm border border-gray-200">
-        {/* التابات (Tabs) للتبديل */}
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => {
@@ -97,7 +95,6 @@ export default function AuthPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* حقل الاسم (يظهر في التسجيل فقط) */}
             {!isLogin && (
               <div>
                 <label className="block text-sm text-gray-700 mb-1">Name</label>
@@ -111,7 +108,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* حقل الإيميل (مشترك) */}
             <div>
               <label className="block text-sm text-gray-700 mb-1">
                 Email Address
@@ -125,7 +121,6 @@ export default function AuthPage() {
               />
             </div>
 
-            {/* حقل الباسورد (مشترك) */}
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="block text-sm text-gray-700">Password</label>
@@ -157,7 +152,6 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* حقل تأكيد الباسورد (يظهر في التسجيل فقط) */}
             {!isLogin && (
               <div>
                 <label className="block text-sm text-gray-700 mb-1">
@@ -186,7 +180,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* الشروط والأحكام (يظهر في التسجيل فقط) */}
             {!isLogin && (
               <div className="flex items-start mt-2">
                 <input
@@ -209,7 +202,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* زر الإرسال الرئيسي */}
             <button
               type="submit"
               disabled={loadingAuth}
@@ -226,7 +218,6 @@ export default function AuthPage() {
             </button>
           </form>
 
-          {/* الفاصل */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
@@ -236,9 +227,13 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* أزرار السوشيال (Google & Apple) */}
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            {/* زرار جوجل بعد التعديل */}
+            <button
+              type="button"
+              onClick={handleGoogleAuth}
+              className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"
@@ -246,7 +241,10 @@ export default function AuthPage() {
               />
               {isLogin ? "Login with Google" : "Sign up with Google"}
             </button>
-            <button className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <img
                 src="https://www.svgrepo.com/show/511330/apple-173.svg"
                 alt="Apple"
