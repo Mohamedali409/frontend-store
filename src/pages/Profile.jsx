@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "../context/AuthContext"; // تأكد من مسار الـ Context
+import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next"; // استيراد الترجمة
 import {
   User,
   Mail,
@@ -14,7 +15,6 @@ import {
   Bell,
 } from "lucide-react";
 
-// مكون فرعي لبطاقات الإحصائيات السريعة
 const StatCard = ({ icon: Icon, label, value, color }) => (
   <motion.div
     whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0,0,0,0.05)" }}
@@ -36,8 +36,7 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
   </motion.div>
 );
 
-// مكون فرعي لصفوف البيانات الشخصية
-const InfoRow = ({ icon: Icon, label, value }) => (
+const InfoRow = ({ icon: Icon, label, value, notProvidedText }) => (
   <div className="flex items-center gap-4 py-4 border-b border-gray-50 last:border-b-0">
     <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
       <Icon size={20} strokeWidth={1.5} />
@@ -47,7 +46,7 @@ const InfoRow = ({ icon: Icon, label, value }) => (
         {label}
       </p>
       <p className="text-sm font-semibold text-gray-800 mt-0.5">
-        {value || "Not provided"}
+        {value || notProvidedText}
       </p>
     </div>
     <motion.button
@@ -60,17 +59,13 @@ const InfoRow = ({ icon: Icon, label, value }) => (
 );
 
 export default function Profile() {
-  const { user, logout } = useAuth(); // جلب بيانات اليوزر ودالة تسجيل الخروج
+  const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation(); // تهيئة الترجمة
+  const isRtl = i18n.language === "ar"; // لمعرفة الاتجاه لو احتجناه
 
-  // أنيميشن ظهور العناصر ورا بعض (Stagger)
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1, // التأخير بين كل عنصر والتاني
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
   const itemVariants = {
@@ -90,17 +85,13 @@ export default function Profile() {
       className="min-h-screen bg-[#FBFBFE] pt-10 pb-20"
     >
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* هيدر الصفحة بتصميم عصري (البلور والخلفية الداكنة) */}
         <motion.div
           variants={itemVariants}
           className="relative rounded-[3rem] overflow-hidden mb-10 shadow-lg shadow-gray-100"
         >
-          {/* الخلفية المتدرجة (Cover Image) */}
           <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400" />
 
-          {/* طبقة مصنفرة (Glassmorphism) فوق التدرج */}
           <div className="relative bg-white/5 backdrop-blur-sm p-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-            {/* الصورة الشخصية (الـ Avatar) */}
             <div className="relative group">
               <div className="w-32 h-32 rounded-full bg-white p-1 shadow-2xl ring-4 ring-white/20 overflow-hidden">
                 {user?.avatar ? (
@@ -123,31 +114,36 @@ export default function Profile() {
               </motion.button>
             </div>
 
-            {/* اسم اليوزر وتاريخ الانضمام */}
-            <div className="flex-grow">
+            <div
+              className={`flex-grow ${isRtl ? "md:text-right" : "md:text-left"}`}
+            >
               <h1 className="text-4xl font-black text-white tracking-tighter">
-                {user?.name || "Guest User"}
+                {user?.name || t("Profile.guestUser")}
               </h1>
-              <p className="text-orange-50 mt-2 flex items-center gap-2 justify-center md:justify-start">
+              <p
+                className={`text-orange-50 mt-2 flex items-center gap-2 justify-center ${isRtl ? "md:justify-end" : "md:justify-start"}`}
+              >
                 <CalendarDays size={16} />
-                Joined{" "}
+                {t("Profile.joined")}{" "}
                 {user?.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString("en-US", {
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "Recently"}
+                  ? new Date(user.createdAt).toLocaleDateString(
+                      isRtl ? "ar-EG" : "en-US",
+                      {
+                        month: "long",
+                        year: "numeric",
+                      },
+                    )
+                  : t("Profile.recently")}
               </p>
             </div>
 
-            {/* أزرار الأكشن السريعة */}
             <div className="flex items-center gap-3">
               <motion.button
                 whileHover={{ y: -3 }}
                 className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2.5 transition-colors"
               >
                 <Edit2 size={16} />
-                Edit Profile
+                {t("Profile.editProfile")}
               </motion.button>
               <motion.button
                 whileHover={{ y: -3 }}
@@ -155,46 +151,43 @@ export default function Profile() {
                 className="bg-white hover:bg-red-50 text-red-600 px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2.5 transition-colors shadow-sm"
               >
                 <LogOut size={16} />
-                Logout
+                {t("Profile.logout")}
               </motion.button>
             </div>
           </div>
         </motion.div>
 
-        {/* شبكة الإحصائيات السريعة (Stats Grid) */}
         <motion.div
           variants={itemVariants}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
         >
           <StatCard
             icon={Package}
-            label="Total Orders"
+            label={t("Profile.totalOrders")}
             value={user?.totalOrders || "0"}
             color="bg-orange-500"
           />
           <StatCard
             icon={Heart}
-            label="Wishlist Items"
+            label={t("Profile.wishlistItems")}
             value={user?.wishlistCount || "0"}
             color="bg-red-500"
           />
           <StatCard
             icon={Bell}
-            label="Notifications"
+            label={t("Profile.notifications")}
             value={user?.notificationsCount || "0"}
             color="bg-blue-500"
           />
           <StatCard
             icon={MapPin}
-            label="Saved Addresses"
+            label={t("Profile.savedAddresses")}
             value={user?.addressesCount || "0"}
             color="bg-amber-500"
           />
         </motion.div>
 
-        {/* الجزء السفلي: البيانات التفصيلية والقائمة الجانبية */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* بطاقة البيانات الشخصية (الرئيسية) */}
           <motion.div
             variants={itemVariants}
             className="lg:col-span-2 bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm shadow-gray-50"
@@ -204,41 +197,57 @@ export default function Profile() {
                 <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center">
                   <User size={18} />
                 </div>
-                Personal Information
+                {t("Profile.personalInfo")}
               </h2>
-              <p className="text-sm text-gray-400">Manage your details</p>
+              <p className="text-sm text-gray-400">
+                {t("Profile.manageDetails")}
+              </p>
             </div>
 
-            {/* صفوف البيانات */}
-            <InfoRow icon={User} label="Full Name" value={user?.name} />
-            <InfoRow icon={Mail} label="Email Address" value={user?.email} />
-            <InfoRow icon={Phone} label="Phone Number" value={user?.phone} />
+            <InfoRow
+              icon={User}
+              label={t("Profile.fullName")}
+              value={user?.name}
+              notProvidedText={t("Profile.notProvided")}
+            />
+            <InfoRow
+              icon={Mail}
+              label={t("Profile.emailAddress")}
+              value={user?.email}
+              notProvidedText={t("Profile.notProvided")}
+            />
+            <InfoRow
+              icon={Phone}
+              label={t("Profile.phoneNumber")}
+              value={user?.phone}
+              notProvidedText={t("Profile.notProvided")}
+            />
             <InfoRow
               icon={MapPin}
-              label="Default Address"
+              label={t("Profile.defaultAddress")}
               value={user?.defaultAddress}
+              notProvidedText={t("Profile.notProvided")}
             />
           </motion.div>
 
-          {/* قائمة جانبية سريعة (Navigation) */}
           <motion.div
             variants={itemVariants}
             className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm shadow-gray-50"
           >
             <h3 className="text-xl font-black text-gray-900 mb-8 tracking-tight">
-              Quick Actions
+              {t("Profile.quickActions")}
             </h3>
             <div className="flex flex-col gap-2">
               {[
-                { label: "My Orders", icon: Package },
-                { label: "Payment Methods", icon: Heart },
-                { label: "Security Settings", icon: User },
-                { label: "Notifications", icon: Bell },
+                { label: t("my_orders"), icon: Package },
+                { label: t("Profile.paymentMethods"), icon: Heart },
+                { label: t("Profile.securitySettings"), icon: User },
+                { label: t("Profile.notifications"), icon: Bell },
               ].map((item, i) => (
                 <motion.button
                   key={i}
-                  whileHover={{ x: 5, bg: "#FFF7ED" }}
-                  className="w-full p-4 rounded-xl flex items-center gap-4 text-left group transition-colors"
+                  whileHover={{ x: isRtl ? -5 : 5, bg: "#FFF7ED" }}
+                  className={`w-full p-4 rounded-xl flex items-center gap-4 text-left group transition-colors ${isRtl ? "flex-row-reverse text-right" : ""}`}
                 >
                   <div className="w-10 h-10 rounded-xl bg-gray-50 group-hover:bg-white text-gray-400 group-hover:text-orange-500 flex items-center justify-center border border-gray-100 group-hover:border-orange-100 transition-colors">
                     <item.icon size={18} />
@@ -246,8 +255,10 @@ export default function Profile() {
                   <span className="text-sm font-semibold text-gray-700 group-hover:text-orange-600 transition-colors">
                     {item.label}
                   </span>
-                  <div className="flex-grow text-right text-gray-300 group-hover:text-orange-300 transition-colors">
-                    →
+                  <div
+                    className={`flex-grow ${isRtl ? "text-left" : "text-right"} text-gray-300 group-hover:text-orange-300 transition-colors`}
+                  >
+                    {isRtl ? "←" : "→"}
                   </div>
                 </motion.button>
               ))}

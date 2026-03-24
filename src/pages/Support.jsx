@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios"; // تأكد من تثبيت axios: npm install axios
+import axios from "axios";
+import { useTranslation } from "react-i18next"; // استيراد الترجمة
 import {
   Headphones,
   Mail,
-  MapPin,
   Send,
   MessageSquare,
   HelpCircle,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export default function Support() {
-  // 1. تحديث الـ State لتشمل الـ subject بناءً على الـ Backend Schema
+  const { t } = useTranslation(); // تهيئة الترجمة
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,7 +20,6 @@ export default function Support() {
     message: "",
   });
 
-  // حالة للتحميل عشان نوقف الزرار وقت الإرسال
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const containerVariants = {
@@ -44,15 +43,12 @@ export default function Support() {
       );
 
       if (response.data.success) {
-        alert("تم إرسال رسالتك بنجاح! راجع بريدك الإلكتروني لتأكيد الاستلام.");
+        alert(t("Support.successMsg"));
         setFormData({ name: "", email: "", subject: "", message: "" });
       }
     } catch (error) {
       console.error("Error submitting support ticket:", error);
-      alert(
-        error.response?.data?.message ||
-          "حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.",
-      );
+      alert(error.response?.data?.message || t("Support.errorMsg"));
     } finally {
       setIsSubmitting(false);
     }
@@ -71,11 +67,9 @@ export default function Support() {
             <Headphones size={40} strokeWidth={1.5} />
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 italic">
-            How Can We Help You?
+            {t("Support.title")}
           </h1>
-          <p className="text-gray-500 text-lg">
-            Our support team is available 24/7 to answer your queries.
-          </p>
+          <p className="text-gray-500 text-lg">{t("Support.subtitle")}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -85,7 +79,8 @@ export default function Support() {
           >
             <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
               <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <MessageSquare className="text-orange-500" /> Get in Touch
+                <MessageSquare className="text-orange-500" />{" "}
+                {t("Support.getInTouch")}
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -94,7 +89,7 @@ export default function Support() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase">
-                      Email Us
+                      {t("Support.emailUs")}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-1">
                       support@alyshope.com
@@ -106,24 +101,24 @@ export default function Support() {
 
             <div className="bg-[#1A1A1A] p-8 rounded-[2rem] text-white shadow-xl">
               <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-orange-400">
-                <HelpCircle /> Quick FAQ
+                <HelpCircle /> {t("Support.quickFaq")}
               </h3>
               <div className="space-y-4">
                 <div>
                   <h4 className="font-semibold text-sm mb-1">
-                    Track my order?
+                    {t("Support.faq1_q")}
                   </h4>
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    You can track your order from the 'My Orders' section in
-                    your profile.
+                    {t("Support.faq1_a")}
                   </p>
                 </div>
                 <div className="h-px w-full bg-white/10" />
                 <div>
-                  <h4 className="font-semibold text-sm mb-1">Return policy?</h4>
+                  <h4 className="font-semibold text-sm mb-1">
+                    {t("Support.faq2_q")}
+                  </h4>
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    We accept returns within 14 days of delivery for unused
-                    items.
+                    {t("Support.faq2_a")}
                   </p>
                 </div>
               </div>
@@ -135,17 +130,17 @@ export default function Support() {
             className="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/50"
           >
             <h2 className="text-2xl font-black text-gray-900 mb-2 italic">
-              Send us a Message
+              {t("Support.sendMessage")}
             </h2>
             <p className="text-gray-500 text-sm mb-8">
-              Fill out the form below and we'll reply as soon as possible.
+              {t("Support.formSubtitle")}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase">
-                    Your Name
+                    {t("Support.yourName")}
                   </label>
                   <input
                     type="text"
@@ -155,14 +150,14 @@ export default function Support() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-sm font-medium"
-                    placeholder="Mohamed Ali"
+                    placeholder={t("Support.namePlaceholder")}
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase">
-                    Email Address
+                    {t("Support.emailAddress")}
                   </label>
                   <input
                     type="email"
@@ -172,7 +167,7 @@ export default function Support() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-sm font-medium"
-                    placeholder="ahmed@example.com"
+                    placeholder={t("Support.emailPlaceholder")}
                     disabled={isSubmitting}
                   />
                 </div>
@@ -180,7 +175,7 @@ export default function Support() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase">
-                  Subject
+                  {t("Support.subject")}
                 </label>
                 <input
                   type="text"
@@ -190,14 +185,14 @@ export default function Support() {
                     setFormData({ ...formData, subject: e.target.value })
                   }
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-sm font-medium"
-                  placeholder="Order Delay, Refund, Technical Issue..."
+                  placeholder={t("Support.subjectPlaceholder")}
                   disabled={isSubmitting}
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase">
-                  Your Message
+                  {t("Support.yourMessage")}
                 </label>
                 <textarea
                   required
@@ -207,7 +202,7 @@ export default function Support() {
                     setFormData({ ...formData, message: e.target.value })
                   }
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-sm font-medium resize-none"
-                  placeholder="How can we help you today?"
+                  placeholder={t("Support.messagePlaceholder")}
                   disabled={isSubmitting}
                 ></textarea>
               </div>
@@ -225,11 +220,12 @@ export default function Support() {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" /> Sending...
+                    <Loader2 size={18} className="animate-spin" />{" "}
+                    {t("Support.sending")}
                   </>
                 ) : (
                   <>
-                    <Send size={18} /> Send Message
+                    <Send size={18} /> {t("Support.submitBtn")}
                   </>
                 )}
               </motion.button>

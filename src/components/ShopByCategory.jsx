@@ -1,27 +1,27 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import api from "../utils/api";
 
 // =========================================
-// البيانات الوهمية للفئات (Mock Data)
+// البيانات الاحتياطية (Fallback / Mock Data)
 // =========================================
-const categories = [
+const fallbackCategories = [
   {
     id: 1,
     name: "Computer & Laptop",
-    // استخدمت صور مقصوصة بخلفية بيضاء لتطابق التصميم
     image:
       "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 2,
-    name: "SmartPhone",
+    name: "Smartphones & Tablets", // غيرتها عشان تطابق المسميات في الـ Header
     image:
       "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 3,
-    name: "Headphones",
+    name: "Audio & Headphones", // غيرتها عشان تطابق
     image:
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300",
   },
@@ -45,7 +45,7 @@ const categories = [
   },
   {
     id: 7,
-    name: "Smart Watches",
+    name: "Wearable Electronics", // غيرتها عشان تطابق
     image:
       "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=300",
   },
@@ -54,7 +54,34 @@ const categories = [
 export default function ShopByCategory() {
   const scrollRef = useRef(null);
 
-  // دالة التحكم في الأسهم (يمين ويسار)
+  const [categories, setCategories] = useState(fallbackCategories);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/categories");
+
+        if (
+          response.data &&
+          response.data.categories &&
+          response.data.categories.length > 0
+        ) {
+          setCategories(response.data.categories);
+        }
+      } catch (error) {
+        console.warn(
+          "Server is unreachable or returned an error. Using fallback categories.",
+          error,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const scroll = (direction) => {
     if (scrollRef.current) {
       const scrollAmount = direction === "left" ? -300 : 300;
@@ -65,9 +92,16 @@ export default function ShopByCategory() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 bg-white">
       {/* عنوان القسم */}
-      <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
-        Shop with Categories
-      </h2>
+      <div className="flex items-center justify-between mb-10">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Shop with Categories
+        </h2>
+        {isLoading && (
+          <span className="text-sm text-gray-400 animate-pulse">
+            Loading updates...
+          </span>
+        )}
+      </div>
 
       {/* حاوية الـ Slider */}
       <div className="relative group">
@@ -84,12 +118,16 @@ export default function ShopByCategory() {
         <div
           ref={scrollRef}
           className="flex items-center gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-2 
-                     [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                      [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {categories.map((category) => (
             <Link
-              key={category.id}
-              to={`/category/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
+              key={category.id || category._id}
+              // ==========================================
+              // التعديل هنا: توجيه المستخدم لصفحة المنتجات
+              // مع إرسال اسم القسم كـ Query Parameter
+              // ==========================================
+              to={`/products?category=${encodeURIComponent(category.name)}`}
               className="flex-none w-[180px] md:w-[200px] bg-white border border-gray-100 rounded-sm hover:border-[#FA8232] hover:shadow-md transition-all duration-300 snap-center p-5 flex flex-col items-center justify-between group/card cursor-pointer"
             >
               {/* صورة الفئة */}
@@ -98,6 +136,10 @@ export default function ShopByCategory() {
                   src={category.image}
                   alt={category.name}
                   className="w-full h-full object-contain mix-blend-multiply group-hover/card:scale-110 transition-transform duration-500"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://via.placeholder.com/300?text=No+Image";
+                  }}
                 />
               </div>
 

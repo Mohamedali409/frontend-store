@@ -6,27 +6,24 @@ import { ShoppingCart, Heart, Eye, Star, ArrowRight, X } from "lucide-react";
 // =========================================
 // 1. مكون العداد (Countdown Timer)
 // =========================================
-const CountdownTimer = () => {
+// تم تمرير تاريخ النهاية كـ Prop ليكون أكثر مرونة
+const CountdownTimer = ({ targetDateString }) => {
   const [timeLeft, setTimeLeft] = useState({
-    days: 16,
-    hours: 21,
-    minutes: 57,
-    seconds: 23,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
   });
 
   useEffect(() => {
-    const targetDate =
-      new Date().getTime() +
-      16 * 24 * 60 * 60 * 1000 +
-      21 * 60 * 60 * 1000 +
-      57 * 60 * 1000 +
-      23 * 1000;
+    // تحديد تاريخ الانتهاء الفعلي
+    const targetDate = new Date(targetDateString).getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
 
-      if (distance < 0) {
+      if (distance <= 0) {
         clearInterval(interval);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       } else {
@@ -42,12 +39,12 @@ const CountdownTimer = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [targetDateString]);
 
   const formatTime = (time) => String(time).padStart(2, "0");
 
   return (
-    <div className="bg-[#F3DE6D] text-gray-900 font-medium px-3 py-1.5 text-sm min-w-[160px] text-center">
+    <div className="bg-[#F3DE6D] text-gray-900 font-medium px-3 py-1.5 text-sm min-w-[160px] text-center rounded-sm">
       {timeLeft.days}d : {formatTime(timeLeft.hours)}h :{" "}
       {formatTime(timeLeft.minutes)}m : {formatTime(timeLeft.seconds)}s
     </div>
@@ -152,6 +149,19 @@ export default function BestDeals() {
 
   const closeQuickView = () => setQuickViewProduct(null);
 
+  // إغلاق نافذة Quick View عند الضغط على زر Escape في لوحة المفاتيح
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeQuickView();
+    };
+
+    if (quickViewProduct) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [quickViewProduct]);
+
   return (
     <section className="max-w-7xl mx-auto px-4 py-8 md:py-12 bg-white">
       {/* Header & Timer Section */}
@@ -162,21 +172,22 @@ export default function BestDeals() {
           </h2>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-600">Deals ends in</span>
-            <CountdownTimer />
+            {/* تم تحديد تاريخ نهاية الخصم هنا */}
+            <CountdownTimer targetDateString="2026-04-10T23:59:59" />
           </div>
         </div>
         <Link
           to="/products"
-          className="text-[#2DB2FF] font-medium text-sm flex items-center gap-1.5 hover:gap-2 transition-all"
+          className="text-[#2DB2FF] font-medium text-sm flex items-center gap-1.5 hover:gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-[#2DB2FF] rounded-sm"
         >
           Browse All Product <ArrowRight size={16} />
         </Link>
       </div>
 
       {/* Grid Layout Container */}
-      <div className="border border-gray-200 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 bg-white">
+      <div className="border border-gray-200 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 bg-white rounded-sm overflow-hidden">
         {/* =========================================
-            1. Featured Product (الكرت الكبير المطابق للصورة تماماً)
+            1. Featured Product 
            ========================================= */}
         <div className="col-span-2 md:col-span-4 lg:col-span-1 lg:row-span-2 border-b lg:border-b-0 lg:border-r border-gray-200 p-5 flex flex-col relative group bg-white">
           {/* Badges */}
@@ -196,18 +207,18 @@ export default function BestDeals() {
           {/* Product Image */}
           <Link
             to={`/product/${featuredProduct.id}`}
-            className="block relative overflow-hidden mb-5 mt-4"
+            className="block relative overflow-hidden mb-5 mt-4 focus:outline-none focus:ring-2 focus:ring-[#2DB2FF]"
           >
             <img
               src={featuredProduct.image}
               alt={featuredProduct.name}
               className="w-full h-56 sm:h-72 lg:h-[18rem] object-contain mx-auto mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
             />
           </Link>
 
           {/* Product Info */}
           <div className="flex flex-col flex-grow">
-            {/* Rating */}
             <div className="flex items-center gap-1 mb-2">
               <div className="flex gap-0.5 text-[#F3DE6D]">
                 {[...Array(5)].map((_, i) => (
@@ -219,17 +230,15 @@ export default function BestDeals() {
               </span>
             </div>
 
-            {/* Title */}
             <Link
               to={`/product/${featuredProduct.id}`}
-              className="hover:text-orange-500 transition-colors"
+              className="hover:text-orange-500 transition-colors focus:outline-none"
             >
               <h3 className="text-gray-800 text-[15px] md:text-base font-medium mb-3 line-clamp-2 leading-snug">
                 {featuredProduct.name}
               </h3>
             </Link>
 
-            {/* Price (Old first, then New in Blue - exact match) */}
             <div className="flex items-center gap-2 mb-3">
               {featuredProduct.oldPrice && (
                 <span className="text-gray-400 line-through text-base">
@@ -241,25 +250,27 @@ export default function BestDeals() {
               </span>
             </div>
 
-            {/* Description */}
             <p className="text-[13px] text-gray-500 mb-6 line-clamp-3 leading-relaxed">
               {featuredProduct.description}
             </p>
 
-            {/* Action Buttons (أصغر ومطابقة للصورة) */}
             <div className="flex items-center gap-2 mt-auto w-full">
-              <button className="w-10 h-10 bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm flex items-center justify-center transition-colors flex-shrink-0">
+              <button
+                aria-label="Add to Favorites"
+                className="w-10 h-10 bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm flex items-center justify-center transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              >
                 <Heart size={18} strokeWidth={1.5} />
               </button>
 
-              <button className="flex-grow h-10 bg-[#FA8232] hover:bg-[#E57328] text-white font-bold rounded-sm flex items-center justify-center gap-1.5 transition-colors text-[13px]">
+              <button className="flex-grow h-10 bg-[#FA8232] hover:bg-[#E57328] text-white font-bold rounded-sm flex items-center justify-center gap-1.5 transition-colors text-[13px] focus:outline-none focus:ring-2 focus:ring-orange-500">
                 <ShoppingCart size={16} strokeWidth={2} />
                 <span>ADD TO CART</span>
               </button>
 
               <button
+                aria-label="Quick View"
                 onClick={(e) => openQuickView(e, featuredProduct)}
-                className="w-10 h-10 bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm flex items-center justify-center transition-colors flex-shrink-0"
+                className="w-10 h-10 bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm flex items-center justify-center transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <Eye size={18} strokeWidth={1.5} />
               </button>
@@ -268,12 +279,12 @@ export default function BestDeals() {
         </div>
 
         {/* =========================================
-            2. Small Products Grid (المنتجات الصغيرة)
+            2. Small Products Grid 
            ========================================= */}
         {smallProducts.map((product, index) => (
           <div
             key={product.id}
-            className={`p-4 relative group flex flex-col justify-between hover:shadow-lg transition-shadow bg-white ${
+            className={`p-4 relative group flex flex-col justify-between hover:shadow-[inset_0_0_0_1px_#FA8232] transition-shadow bg-white ${
               (index + 1) % 4 !== 0
                 ? "border-r border-b border-gray-200"
                 : "border-b border-gray-200"
@@ -301,11 +312,12 @@ export default function BestDeals() {
             <div className="relative mb-3 h-32 md:h-36 flex items-center justify-center overflow-hidden">
               <Link
                 to={`/product/${product.id}`}
-                className="block w-full h-full"
+                className="block w-full h-full focus:outline-none"
               >
                 <img
                   src={product.image}
                   alt={product.name}
+                  loading="lazy"
                   className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                 />
               </Link>
@@ -313,15 +325,22 @@ export default function BestDeals() {
               {/* Hover Actions */}
               <div className="absolute inset-0 bg-black/5 opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none hidden lg:flex">
                 <div className="flex gap-2 pointer-events-auto transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <button className="w-9 h-9 bg-[#FA8232] text-white rounded-full flex items-center justify-center shadow-md hover:bg-[#E57328] transition-colors">
+                  <button
+                    aria-label="Add to Favorites"
+                    className="w-9 h-9 bg-[#FA8232] text-white rounded-full flex items-center justify-center shadow-md hover:bg-[#E57328] transition-colors focus:outline-none"
+                  >
                     <Heart size={16} />
                   </button>
-                  <button className="w-9 h-9 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors">
+                  <button
+                    aria-label="Add to Cart"
+                    className="w-9 h-9 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors focus:outline-none"
+                  >
                     <ShoppingCart size={16} />
                   </button>
                   <button
+                    aria-label="Quick View"
                     onClick={(e) => openQuickView(e, product)}
-                    className="w-9 h-9 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors"
+                    className="w-9 h-9 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors focus:outline-none"
                   >
                     <Eye size={16} />
                   </button>
@@ -332,7 +351,7 @@ export default function BestDeals() {
             <div className="mt-auto">
               <Link
                 to={`/product/${product.id}`}
-                className="hover:text-orange-500 transition-colors"
+                className="hover:text-orange-500 transition-colors focus:outline-none"
               >
                 <h3 className="text-gray-800 text-[13px] md:text-sm font-medium mb-1 line-clamp-2 leading-tight min-h-[2.5rem]">
                   {product.name}
@@ -366,14 +385,17 @@ export default function BestDeals() {
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div
+              role="dialog"
+              aria-modal="true"
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto flex flex-col md:flex-row z-10"
             >
               <button
+                aria-label="Close modal"
                 onClick={closeQuickView}
-                className="absolute top-3 right-3 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors z-20"
+                className="absolute top-3 right-3 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors z-20 focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
                 <X size={20} />
               </button>
@@ -405,16 +427,19 @@ export default function BestDeals() {
                     "Premium quality product with excellent features."}
                 </p>
                 <div className="flex gap-3">
-                  <button className="flex-1 bg-[#FA8232] hover:bg-[#E57328] text-white font-bold py-3 rounded-sm flex items-center justify-center gap-2 transition-colors">
+                  <button className="flex-1 bg-[#FA8232] hover:bg-[#E57328] text-white font-bold py-3 rounded-sm flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500">
                     <ShoppingCart size={18} /> ADD TO CART
                   </button>
-                  <button className="w-12 h-12 flex items-center justify-center bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm transition-colors">
+                  <button
+                    aria-label="Add to Favorites"
+                    className="w-12 h-12 flex items-center justify-center bg-[#FFE5D3] text-gray-800 hover:bg-orange-200 rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  >
                     <Heart size={20} />
                   </button>
                 </div>
                 <Link
                   to={`/product/${quickViewProduct.id}`}
-                  className="mt-6 text-center text-sm font-semibold text-gray-500 hover:text-[#FA8232] underline transition-colors"
+                  className="mt-6 text-center text-sm font-semibold text-gray-500 hover:text-[#FA8232] underline transition-colors focus:outline-none"
                 >
                   View Full Details
                 </Link>

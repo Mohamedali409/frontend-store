@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 // =========================================
 // 1. البيانات الوهمية (Mock Data)
 // =========================================
-const tabs = [
-  "All Product",
-  "Keyboard & Mouse",
-  "Headphone",
-  "Webcam",
-  "Printer",
-];
-
+// المنتجات زي ما هي بدون تغيير
 const products = [
   {
     id: 1,
@@ -41,7 +35,7 @@ const products = [
     reviews: 600,
     badge: { text: "HOT", color: "bg-[#EF5151]" },
     image:
-      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=300", // Keyboard image mock
+      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 4,
@@ -50,7 +44,7 @@ const products = [
     rating: 4,
     reviews: 492,
     image:
-      "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=300", // Printer image mock
+      "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 5,
@@ -59,7 +53,7 @@ const products = [
     rating: 4,
     reviews: 740,
     image:
-      "https://images.unsplash.com/photo-1555274175-6cbf6f3b137b?auto=format&fit=crop&q=80&w=300", // Camera/Webcam mock
+      "https://images.unsplash.com/photo-1555274175-6cbf6f3b137b?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 6,
@@ -67,7 +61,7 @@ const products = [
     price: 220,
     rating: 4,
     reviews: 556,
-    badge: { text: "SALE", color: "bg-[#2DB2FF]" }, // Changed to green in UI manually
+    badge: { text: "SALE", color: "bg-[#2DB2FF]" },
     image:
       "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=300",
   },
@@ -118,62 +112,72 @@ const StarRating = ({ rating }) => {
 // 3. المكون الرئيسي (Computer Accessories)
 // =========================================
 export default function ComputerAccessories() {
-  const [activeTab, setActiveTab] = useState("All Product");
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
+  // تعريف التبويبات بـ ID ثابت عشان المقارنة في الـ State متضربش
+  const tabs = [
+    { id: "all", label: "Accessories.tabs.all" },
+    { id: "keyboard", label: "Accessories.tabs.keyboard" },
+    { id: "headphone", label: "Accessories.tabs.headphone" },
+    { id: "webcam", label: "Accessories.tabs.webcam" },
+    { id: "printer", label: "Accessories.tabs.printer" },
+  ];
+
+  const [activeTabId, setActiveTabId] = useState("all");
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-8 md:py-12 bg-white">
       {/* Header & Tabs */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4 border-b border-gray-100 pb-2">
+      <div
+        className={`flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4 border-b border-gray-100 pb-2 ${isRTL ? "text-right" : "text-left"}`}
+      >
         <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-          Computer Accessories
+          {t("Accessories.title")}
         </h2>
 
         <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm font-medium">
           {tabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.id}
+              onClick={() => setActiveTabId(tab.id)}
               className={`pb-2 transition-colors relative ${
-                activeTab === tab
+                activeTabId === tab.id
                   ? "text-gray-900"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
-              {tab}
-              {activeTab === tab && (
+              {t(tab.label)}
+              {activeTabId === tab.id && (
                 <span className="absolute bottom-[-2px] left-0 w-full h-0.5 bg-[#FA8232]"></span>
               )}
             </button>
           ))}
           <Link
             to="/accessories"
-            className="text-[#FA8232] flex items-center gap-1.5 hover:gap-2 transition-all ml-auto lg:ml-4 pb-2"
+            className={`text-[#FA8232] flex items-center gap-1.5 hover:gap-2 transition-all pb-2 ${isRTL ? "mr-auto lg:mr-4" : "ml-auto lg:ml-4"}`}
           >
-            Browse All Product <ArrowRight size={16} />
+            {t("Accessories.browse_all")}{" "}
+            {isRTL ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
           </Link>
         </div>
       </div>
 
-      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* =========================================
-            Left Side: Products Grid (3 Columns Width)
-           ========================================= */}
+        {/* Left Side: Products Grid */}
         <div className="lg:col-span-3 border border-gray-200 bg-white grid grid-cols-2 md:grid-cols-4">
           {products.map((product, index) => (
             <div
               key={product.id}
               className={`p-4 relative group flex flex-col hover:shadow-lg transition-shadow bg-white ${
-                // Add right and bottom borders selectively to prevent double borders
                 (index + 1) % 4 !== 0
                   ? "md:border-r border-b border-gray-200"
                   : "border-b border-gray-200"
-              } ${index >= 4 ? "border-b-0 md:border-b-0" : ""}`}
+              } ${index >= 4 ? "md:border-b-0" : ""}`}
             >
-              {/* Badge */}
               {product.badge && (
                 <span
-                  className={`absolute top-3 left-3 z-10 text-[10px] font-bold px-2 py-1 rounded-sm text-white ${
+                  className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} z-10 text-[10px] font-bold px-2 py-1 rounded-sm text-white ${
                     product.badge.text === "25% OFF"
                       ? "bg-[#F3DE6D] text-gray-900"
                       : product.badge.text === "SALE"
@@ -185,7 +189,6 @@ export default function ComputerAccessories() {
                 </span>
               )}
 
-              {/* Product Image */}
               <Link
                 to={`/product/${product.id}`}
                 className="block relative w-full h-32 md:h-40 mb-4 overflow-hidden mt-6"
@@ -197,17 +200,15 @@ export default function ComputerAccessories() {
                 />
               </Link>
 
-              {/* Product Info */}
               <div className="flex flex-col flex-grow justify-end">
-                {/* Rating */}
-                <div className="flex items-center gap-1 mb-2">
+                <div
+                  className={`flex items-center gap-1 mb-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                >
                   <StarRating rating={product.rating} />
-                  <span className="text-[11px] text-gray-400 ml-1">
+                  <span className="text-[11px] text-gray-400">
                     ({product.reviews})
                   </span>
                 </div>
-
-                {/* Title */}
                 <Link
                   to={`/product/${product.id}`}
                   className="hover:text-orange-500 transition-colors"
@@ -216,28 +217,26 @@ export default function ComputerAccessories() {
                     {product.name}
                   </h3>
                 </Link>
-
-                {/* Price */}
-                <div className="flex items-center gap-1.5 mt-auto">
+                <div
+                  className={`flex items-center gap-1.5 mt-auto ${isRTL ? "flex-row-reverse" : ""}`}
+                >
+                  <span className="text-[#2DB2FF] font-semibold text-sm">
+                    ${product.price}
+                  </span>
                   {product.oldPrice && (
                     <span className="text-gray-400 line-through text-[11px] md:text-xs">
                       ${product.oldPrice}
                     </span>
                   )}
-                  <span className="text-[#2DB2FF] font-semibold text-sm">
-                    ${product.price}
-                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* =========================================
-            Right Side: Vertical Banners (1 Column Width)
-           ========================================= */}
+        {/* Right Side: Banners */}
         <div className="lg:col-span-1 flex flex-col gap-6">
-          {/* Top Banner (Yellow) */}
+          {/* Top Banner */}
           <div className="bg-[#FBE8A4] rounded-sm p-6 flex flex-col items-center text-center h-1/2 justify-center hover:-translate-y-1 transition-transform duration-300">
             <img
               src="https://images.unsplash.com/photo-1590658268037-6f116412ae8a?auto=format&fit=crop&q=80&w=200"
@@ -245,13 +244,15 @@ export default function ComputerAccessories() {
               className="w-24 h-24 object-contain mb-4 mix-blend-multiply"
             />
             <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
-              Xiaomi True <br /> Wireless Earbuds
+              {t("Accessories.banners.xiaomi_title")}
             </h3>
             <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-              Escape the noise, It's time to hear the magic with Xiaomi Earbuds.
+              {t("Accessories.banners.xiaomi_desc")}
             </p>
             <div className="flex items-center gap-2 mb-4 text-sm">
-              <span className="text-gray-600">Only for:</span>
+              <span className="text-gray-600">
+                {t("Accessories.banners.only_for")}
+              </span>
               <span className="bg-white px-3 py-1 font-bold text-gray-900 rounded-sm shadow-sm">
                 $299 USD
               </span>
@@ -260,26 +261,28 @@ export default function ComputerAccessories() {
               to="/shop"
               className="w-full bg-[#FA8232] hover:bg-[#E57328] text-white font-bold py-3 rounded-sm flex justify-center items-center gap-2 transition-colors uppercase text-sm"
             >
-              Shop Now <ArrowRight size={18} />
+              {t("Promos.shop_now")}{" "}
+              {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
             </Link>
           </div>
 
-          {/* Bottom Banner (Dark Blue) */}
+          {/* Bottom Banner */}
           <div className="bg-[#12415D] rounded-sm p-6 flex flex-col items-center text-center h-1/2 justify-center hover:-translate-y-1 transition-transform duration-300">
             <span className="bg-white/10 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider mb-4 rounded-sm">
-              Summer Sales
+              {t("Accessories.banners.summer_sales")}
             </span>
-            <h3 className="text-3xl font-bold text-white mb-2">37% DISCOUNT</h3>
+            <h3 className="text-3xl font-bold text-white mb-2">
+              {t("Accessories.banners.discount")}
+            </h3>
             <p className="text-gray-300 text-sm mb-6">
-              only for{" "}
-              <span className="text-[#F3DE6D] font-medium">SmartPhone</span>{" "}
-              product.
+              {t("Accessories.banners.smartphone_promo")}
             </p>
             <Link
               to="/shop"
               className="w-full bg-[#2DB2FF] hover:bg-[#209CE6] text-white font-bold py-3 rounded-sm flex justify-center items-center gap-2 transition-colors uppercase text-sm"
             >
-              Shop Now <ArrowRight size={18} />
+              {t("Promos.shop_now")}{" "}
+              {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
             </Link>
           </div>
         </div>

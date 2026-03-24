@@ -8,17 +8,18 @@ import {
   ArrowRight,
   ShoppingCart,
 } from "lucide-react";
-// 🚨 تأكد من صحة مسار ملف api.js الخاص بك
+import { useTranslation } from "react-i18next";
 import api from "../utils/api.js";
 
 export default function Cart() {
+  const { t, i18n } = useTranslation();
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // =========================================
-  // دالة تظبيط مسار الصورة
-  // =========================================
+  // تحديد اتجاه السهم بناءً على اللغة (اختياري للجماليات)
+  const isArabic = i18n.language === "ar";
+
   const getImageUrl = (imagePath) => {
     if (!imagePath)
       return "https://placehold.co/150x150/f3f4f6/6b7280?text=No+Image";
@@ -26,9 +27,6 @@ export default function Cart() {
     return `http://localhost:3000/${imagePath}`;
   };
 
-  // =========================================
-  // جلب بيانات السلة من السيرفر
-  // =========================================
   const fetchCart = async () => {
     setIsLoading(true);
     setError(null);
@@ -39,7 +37,7 @@ export default function Cart() {
       }
     } catch (err) {
       console.error("Error fetching cart:", err);
-      setError("Failed to load cart. Please try again.");
+      setError(t("Cart.failed_load_cart"));
     } finally {
       setIsLoading(false);
     }
@@ -49,14 +47,10 @@ export default function Cart() {
     fetchCart();
   }, []);
 
-  // =========================================
-  // تحديث الكمية في السيرفر + إشعار الهيدر
-  // =========================================
   const updateQuantity = async (productId, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
     if (newQuantity < 1) return;
 
-    // Optimistic Update
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.productId._id === productId
@@ -70,52 +64,42 @@ export default function Cart() {
         productId: productId,
         quantity: change,
       });
-
-      // 🚀 إرسال إشارة للهيدر (اختياري لو الهيدر بيعرض إجمالي الكميات)
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error updating quantity:", err);
-      fetchCart(); // التراجع عن التعديل في حالة الفشل
+      fetchCart();
     }
   };
 
-  // =========================================
-  // حذف منتج من السيرفر + إشعار الهيدر فوراً
-  // =========================================
   const removeItem = async (productId) => {
-    // Optimistic Delete
     setCartItems((prevItems) =>
       prevItems.filter((item) => item.productId._id !== productId),
     );
 
     try {
       await api.delete(`/cart/${productId}`);
-
-      // 🚀 إرسال إشارة للـ Header عشان ينقص رقم السلة فوراً
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error removing item:", err);
-      fetchCart(); // إرجاع البيانات لو السيرفر فشل
-      alert("Failed to remove item");
+      fetchCart();
+      alert(t("Cart.failed_remove"));
     }
   };
 
-  // =========================================
-  // حساب الإجماليات
-  // =========================================
   const subTotal = cartItems.reduce(
     (acc, item) => acc + (item.productId?.price || 0) * item.quantity,
     0,
   );
   const shipping = 0;
-  const tax = subTotal * 0.14; // ضريبة 14%
+  const tax = subTotal * 0.14;
   const total = subTotal + shipping + tax;
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-[#FA8232] font-bold text-xl flex items-center gap-3">
-          <ShoppingCart className="animate-bounce" size={28} /> Loading Cart...
+          <ShoppingCart className="animate-bounce" size={28} />{" "}
+          {t("Cart.loading_cart")}
         </div>
       </div>
     );
@@ -131,52 +115,55 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-white pb-20">
-      {/* Breadcrumb */}
       <div className="bg-[#F2F4F5] py-4">
         <div className="max-w-7xl mx-auto px-4 text-sm text-gray-500 flex items-center gap-2">
           <Link
             to="/"
             className="hover:text-[#FA8232] transition-colors flex items-center gap-2"
           >
-            Home <ArrowRight size={14} className="text-gray-400" />
+            {t("home")}{" "}
+            {isArabic ? (
+              <ArrowLeft size={14} className="text-gray-400" />
+            ) : (
+              <ArrowRight size={14} className="text-gray-400" />
+            )}
           </Link>
-          <span className="text-[#FA8232] font-medium">Shopping Cart</span>
+          <span className="text-[#FA8232] font-medium">
+            {t("Cart.shopping_cart")}
+          </span>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-10">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
-          Shopping Cart
+          {t("Cart.shopping_cart")}
         </h1>
 
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 border border-gray-200 rounded-lg bg-gray-50">
             <ShoppingCart size={80} className="text-gray-300 mb-6" />
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              Your cart is empty!
+              {t("Cart.cart_empty")}
             </h2>
-            <p className="text-gray-500 mb-8">
-              Browse our products and discover our best deals.
-            </p>
+            <p className="text-gray-500 mb-8">{t("Cart.cart_browse")}</p>
             <Link
               to="/products"
               className="bg-[#FA8232] hover:bg-[#E57328] text-white px-8 py-3.5 rounded-sm font-bold text-sm uppercase transition-colors"
             >
-              Start Shopping
+              {t("Cart.start_shopping")}
             </Link>
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
-            {/* Left Side: Product Table */}
             <div className="w-full lg:w-2/3 border border-gray-200 rounded-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left min-w-[600px]">
                   <thead className="bg-[#F2F4F5] text-gray-600 text-xs uppercase font-semibold">
                     <tr>
-                      <th className="px-6 py-4">Products</th>
-                      <th className="px-6 py-4 w-32">Price</th>
-                      <th className="px-6 py-4 w-40">Quantity</th>
-                      <th className="px-6 py-4 w-32">Sub-Total</th>
+                      <th className="px-6 py-4">{t("Cart.products")}</th>
+                      <th className="px-6 py-4 w-32">{t("Cart.price")}</th>
+                      <th className="px-6 py-4 w-40">{t("Cart.quantity")}</th>
+                      <th className="px-6 py-4 w-32">{t("Cart.sub_total")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -256,29 +243,35 @@ export default function Cart() {
                   to="/products"
                   className="inline-flex items-center gap-2 text-sm font-bold text-[#FA8232] border-2 border-[#FFE5D3] px-6 py-2.5 rounded-sm hover:bg-[#FA8232] hover:text-white transition-colors uppercase tracking-wide"
                 >
-                  <ArrowLeft size={16} /> Return to Shop
+                  {isArabic ? (
+                    <ArrowRight size={16} />
+                  ) : (
+                    <ArrowLeft size={16} />
+                  )}{" "}
+                  {t("Cart.return_to_shop")}
                 </Link>
               </div>
             </div>
 
-            {/* Right Side: Summary */}
             <div className="w-full lg:w-1/3 bg-white border border-gray-200 rounded-sm p-6 lg:sticky lg:top-6">
               <h2 className="text-lg font-bold text-gray-900 mb-6">
-                Cart Totals
+                {t("Cart.cart_totals")}
               </h2>
               <div className="flex flex-col gap-4 text-sm text-gray-600 mb-6">
                 <div className="flex justify-between items-center">
-                  <span>Sub-total</span>
+                  <span>{t("Cart.sub_total")}</span>
                   <span className="font-medium text-gray-900">
                     ${subTotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Shipping</span>
-                  <span className="font-medium text-gray-900">Free</span>
+                  <span>{t("Cart.shipping")}</span>
+                  <span className="font-medium text-gray-900">
+                    {t("Cart.free")}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Tax (14%)</span>
+                  <span>{t("Cart.tax")}</span>
                   <span className="font-medium text-gray-900">
                     ${tax.toFixed(2)}
                   </span>
@@ -286,7 +279,9 @@ export default function Cart() {
               </div>
               <hr className="border-gray-200 mb-6" />
               <div className="flex justify-between items-center mb-8">
-                <span className="text-base font-bold text-gray-900">Total</span>
+                <span className="text-base font-bold text-gray-900">
+                  {t("Cart.total")}
+                </span>
                 <span className="text-xl font-bold text-[#FA8232]">
                   ${total.toFixed(2)}
                 </span>
@@ -295,7 +290,8 @@ export default function Cart() {
                 to="/checkout"
                 className="w-full flex items-center justify-center gap-2 bg-[#FA8232] hover:bg-[#E57328] text-white px-6 py-3.5 rounded-sm font-bold text-sm uppercase transition-colors"
               >
-                Proceed to Checkout <ArrowRight size={18} />
+                {t("Cart.proceed_to_checkout")}{" "}
+                {isArabic ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
               </Link>
             </div>
           </div>

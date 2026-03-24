@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   Target,
   ShieldCheck,
@@ -10,6 +11,8 @@ import {
 } from "lucide-react";
 
 export default function About() {
+  const { t } = useTranslation();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -34,15 +37,13 @@ export default function About() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-2 block">
-            Our Story
+            {t("About.our_story")}
           </span>
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 italic">
-            Empowering Your Shopping Experience
+            {t("About.hero_title")}
           </h1>
           <p className="text-gray-500 text-lg leading-relaxed">
-            We started with a simple idea: to provide top-quality products with
-            unmatched customer service. Today, we serve thousands of happy
-            customers worldwide, bringing the best deals right to your doorstep.
+            {t("About.hero_desc")}
           </p>
         </motion.div>
 
@@ -52,10 +53,10 @@ export default function About() {
           className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
         >
           {[
-            { label: "Active Users", value: "50K+", icon: Users },
-            { label: "Products", value: "10K+", icon: Target },
-            { label: "Awards Won", value: "15", icon: Award },
-            { label: "Growth", value: "200%", icon: TrendingUp },
+            { label: t("About.active_users"), value: "50K+", icon: Users },
+            { label: t("About.products_stat"), value: "10K+", icon: Target },
+            { label: t("About.awards_won"), value: "15", icon: Award },
+            { label: t("About.growth"), value: "200%", icon: TrendingUp },
           ].map((stat, i) => (
             <div
               key={i}
@@ -80,27 +81,27 @@ export default function About() {
           className="bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-xl shadow-gray-100"
         >
           <h2 className="text-3xl font-black text-center mb-12 italic">
-            Why Choose Us?
+            {t("About.why_choose_us")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
               {
-                title: "Secure Payments",
-                desc: "Your security is our priority. We use industry-leading encryption to protect your data.",
+                title: t("About.secure_payments"),
+                desc: t("About.secure_desc"),
                 icon: ShieldCheck,
                 color: "text-green-500",
                 bg: "bg-green-50",
               },
               {
-                title: "Fast Delivery",
-                desc: "Get your orders in record time with our optimized and reliable shipping network.",
+                title: t("About.fast_delivery"),
+                desc: t("About.fast_desc"),
                 icon: Zap,
                 color: "text-orange-500",
                 bg: "bg-orange-50",
               },
               {
-                title: "Quality Guaranteed",
-                desc: "Every product is vetted for quality to ensure you get exactly what you pay for.",
+                title: t("About.quality_guaranteed"),
+                desc: t("About.quality_desc"),
                 icon: Award,
                 color: "text-blue-500",
                 bg: "bg-blue-50",

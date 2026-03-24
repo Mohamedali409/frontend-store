@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next"; // 👈 استدعاء مكتبة الترجمة
 import {
   Search,
   ChevronDown,
@@ -19,6 +20,9 @@ import {
 const fallbackProducts = [];
 
 export default function Products() {
+  const { t, i18n } = useTranslation(); // 👈 تفعيل الترجمة
+  const isRTL = i18n.language === "ar"; // 👈 عشان نعرف لو اللغة عربي نظبط اتجاهات بعض الحاجات
+
   // --- States for Filters & Pagination ---
   const [activeCategory, setActiveCategory] = useState("");
   const [activeCategoryType, setActiveCategoryType] = useState("");
@@ -190,7 +194,6 @@ export default function Products() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // 🚀 دالة إضافة المنتج للسلة المحدثة
   const handleAddToCart = async (e, product) => {
     e.preventDefault();
 
@@ -202,46 +205,42 @@ export default function Products() {
           quantity: 1,
         },
         {
-          withCredentials: true, // ضروري لو بتستخدم Cookies في الـ Auth
+          withCredentials: true,
           headers: {
-            // لو بتستخدم JWT Token في الـ LocalStorage خلي السطر ده، لو لأ تقدر تمسحه
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         },
       );
 
       if (response.data.success) {
-        showToast(`"${product.name}" added to cart! 🛒`);
+        showToast(`"${product.name}" ${t("Products.addedToCart")} 🛒`);
       }
     } catch (error) {
-      // 1. هنطبع الخطأ بالتفصيل في الكونسول عشان تقدر تشوفه
       console.error(
         "Full Error Object:",
         error.response?.data || error.message,
       );
 
       if (error.response) {
-        // 2. هنجيب رسالة الخطأ اللي الباك إند بعتها (لو موجودة)
         const serverMessage =
           error.response.data.message ||
           error.response.data.error ||
           "Failed to add product";
 
         if (error.response.status === 401 || error.response.status === 403) {
-          showToast("Please login first to add items to your cart!");
+          showToast(t("Products.loginFirst"));
         } else {
-          // 3. هنعرض رسالة الباك إند الحقيقية للمستخدم
           showToast(`Error: ${serverMessage}`);
         }
       } else {
-        showToast("Network error. Is the server running?");
+        showToast(t("Products.networkError"));
       }
     }
   };
 
   const handleAddToWishlist = (e, product) => {
     e.preventDefault();
-    showToast(`"${product.name}" added to wishlist!`);
+    showToast(`"${product.name}" ${t("Products.addedToWishlist")}!`);
   };
 
   const scrollSlider = (direction) => {
@@ -278,18 +277,20 @@ export default function Products() {
     <div
       className={`group flex flex-col h-full bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 relative ${isCompact ? "min-w-[260px] max-w-[260px]" : ""}`}
     >
-      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
+      <div
+        className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} flex flex-col gap-2 opacity-0 group-hover:opacity-100 ${isRTL ? "-translate-x-4" : "translate-x-4"} group-hover:translate-x-0 transition-all duration-300 z-10`}
+      >
         <button
           onClick={(e) => handleAddToWishlist(e, product)}
           className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-50 shadow-sm border border-gray-100 transition-colors"
-          title="Add to Wishlist"
+          title={t("Products.addToWishlist")}
         >
           <Heart size={18} />
         </button>
         <Link
           to={`/product/${product._id || product.id}`}
           className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-gray-500 hover:text-blue-500 hover:bg-blue-50 shadow-sm border border-gray-100 transition-colors"
-          title="Quick View"
+          title={t("Products.quickView")}
         >
           <Eye size={18} />
         </Link>
@@ -308,7 +309,8 @@ export default function Products() {
 
       <div className="flex flex-col flex-1 p-5">
         <span className="text-xs font-semibold text-orange-500 mb-2 uppercase tracking-wider line-clamp-1">
-          {product.categoryId?.name || "Product"}
+          {/* هنا هنترجم اسم القسم اللي راجع من الداتابيز */}
+          {t(product.categoryId?.name) || t("Products.product")}
         </span>
         <Link
           to={`/product/${product._id || product.id}`}
@@ -327,7 +329,11 @@ export default function Products() {
               }
             />
           ))}
-          <span className="text-xs text-gray-400 ml-1 font-medium">(4)</span>
+          <span
+            className={`text-xs text-gray-400 ${isRTL ? "mr-1" : "ml-1"} font-medium`}
+          >
+            (4)
+          </span>
         </div>
 
         <div className="flex items-center justify-between pt-4 border-t border-gray-50">
@@ -342,7 +348,7 @@ export default function Products() {
           <button
             onClick={(e) => handleAddToCart(e, product)}
             className="flex items-center justify-center bg-gray-900 text-white w-11 h-11 rounded-full hover:bg-orange-500 shadow-md hover:shadow-orange-200 transition-all active:scale-95"
-            title="Add to Cart"
+            title={t("Products.addToCart")}
           >
             <ShoppingCart size={20} className="relative -left-0.5" />
           </button>
@@ -354,7 +360,9 @@ export default function Products() {
   return (
     <div className="bg-gray-50/50 min-h-screen pb-16 relative" ref={topRef}>
       {toast && (
-        <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-50 animate-bounce">
+        <div
+          className={`fixed bottom-6 ${isRTL ? "left-6" : "right-6"} bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-50 animate-bounce`}
+        >
           <CheckCircle2 size={20} className="text-green-400" />
           <span className="text-sm font-medium">{toast}</span>
         </div>
@@ -365,7 +373,7 @@ export default function Products() {
         <aside className="w-full lg:w-[280px] flex-shrink-0 space-y-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-fit">
           <div>
             <h3 className="text-sm font-bold text-gray-900 uppercase mb-5 tracking-wider flex items-center gap-2">
-              Categories
+              {t("Products.categoriesTitle")}
             </h3>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {categoriesList.map((mainCat) => (
@@ -391,11 +399,14 @@ export default function Products() {
                     <span
                       className={`text-sm font-bold transition-colors ${activeCategory === mainCat._id && activeCategoryType === "main" ? "text-orange-600" : "text-gray-800"}`}
                     >
-                      {mainCat.name}
+                      {/* الترجمة لاسم القسم */}
+                      {t(mainCat.name)}
                     </span>
                   </label>
                   {mainCat.subCategories?.length > 0 && (
-                    <div className="pl-6 space-y-2 border-l-2 border-gray-100 ml-2 py-1">
+                    <div
+                      className={`pl-6 space-y-2 border-l-2 border-gray-100 ${isRTL ? "mr-2 border-l-0 border-r-2 pr-6 pl-0" : "ml-2"} py-1`}
+                    >
                       {mainCat.subCategories.map((subCat) => (
                         <label
                           key={subCat._id}
@@ -416,7 +427,8 @@ export default function Products() {
                           <span
                             className={`text-sm transition-colors ${activeCategory === subCat._id && activeCategoryType === "sub" ? "text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-900"}`}
                           >
-                            {subCat.name}
+                            {/* الترجمة لاسم القسم الفرعي */}
+                            {t(subCat.name)}
                           </span>
                         </label>
                       ))}
@@ -429,32 +441,36 @@ export default function Products() {
           <hr className="border-gray-100" />
           <div>
             <h3 className="text-sm font-bold text-gray-900 uppercase mb-5 tracking-wider">
-              Price Range
+              {t("Products.priceRange")}
             </h3>
             <div className="flex items-center gap-3">
               <div className="relative w-full">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                <span
+                  className={`absolute ${isRTL ? "right-3" : "left-3"} top-1/2 -translate-y-1/2 text-gray-400 text-sm`}
+                >
                   $
                 </span>
                 <input
                   type="number"
-                  placeholder="Min"
+                  placeholder={t("Products.min")}
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none transition-all"
+                  className={`w-full border border-gray-200 rounded-lg ${isRTL ? "pr-7 pl-3" : "pl-7 pr-3"} py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none transition-all`}
                 />
               </div>
               <span className="text-gray-400">-</span>
               <div className="relative w-full">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                <span
+                  className={`absolute ${isRTL ? "right-3" : "left-3"} top-1/2 -translate-y-1/2 text-gray-400 text-sm`}
+                >
                   $
                 </span>
                 <input
                   type="number"
-                  placeholder="Max"
+                  placeholder={t("Products.max")}
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none transition-all"
+                  className={`w-full border border-gray-200 rounded-lg ${isRTL ? "pr-7 pl-3" : "pl-7 pr-3"} py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none transition-all`}
                 />
               </div>
             </div>
@@ -467,25 +483,25 @@ export default function Products() {
             <div className="relative w-full md:w-[400px]">
               <input
                 type="text"
-                placeholder="Search products... (Press Enter)"
+                placeholder={t("Products.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={handleSearchSubmit}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-4 pr-10 text-sm focus:outline-none focus:border-orange-500 focus:bg-white transition-all"
+                className={`w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-4 ${isRTL ? "pl-10" : "pr-10"} text-sm focus:outline-none focus:border-orange-500 focus:bg-white transition-all`}
               />
               <button
                 onClick={() => {
                   setSearchQuery(searchInput);
                   setCurrentPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+                className={`absolute ${isRTL ? "left-3" : "right-3"} top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors`}
               >
                 <Search size={18} />
               </button>
             </div>
             <div className="flex items-center gap-3 w-full md:w-auto">
               <span className="text-sm text-gray-500 font-medium">
-                Sort by:
+                {t("Products.sortBy")}
               </span>
               <select
                 value={sortBy}
@@ -495,19 +511,27 @@ export default function Products() {
                 }}
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-orange-500 bg-gray-50 focus:bg-white cursor-pointer transition-all font-medium"
               >
-                <option value="latest">Latest Arrivals</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
+                <option value="latest">{t("Products.latestArrivals")}</option>
+                <option value="price_asc">
+                  {t("Products.priceLowToHigh")}
+                </option>
+                <option value="price_desc">
+                  {t("Products.priceHighToLow")}
+                </option>
               </select>
             </div>
           </div>
 
           {(activeCategory || searchQuery || minPrice || maxPrice) && (
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="text-sm text-gray-500 mr-2">Filters:</span>
+              <span
+                className={`text-sm text-gray-500 ${isRTL ? "ml-2" : "mr-2"}`}
+              >
+                {t("Products.filters")}
+              </span>
               {activeCategory && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-sm border border-orange-100">
-                  {getActiveCategoryName()}{" "}
+                  {t(getActiveCategoryName())}{" "}
                   <button
                     onClick={() => {
                       setActiveCategory("");
@@ -521,7 +545,7 @@ export default function Products() {
               )}
               {searchQuery && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm border border-blue-100">
-                  Search: "{searchQuery}"{" "}
+                  {t("Products.searchPrefix")} "{searchQuery}"{" "}
                   <button
                     onClick={() => {
                       setSearchQuery("");
@@ -535,9 +559,9 @@ export default function Products() {
               )}
               <button
                 onClick={clearFilters}
-                className="text-sm text-gray-500 hover:text-orange-500 underline underline-offset-2 ml-auto"
+                className={`text-sm text-gray-500 hover:text-orange-500 underline underline-offset-2 ${isRTL ? "mr-auto" : "ml-auto"}`}
               >
-                Clear All Filters
+                {t("Products.clearFilters")}
               </button>
             </div>
           )}
@@ -545,12 +569,16 @@ export default function Products() {
           {/* Stats */}
           <div className="mb-6 flex items-center justify-between text-sm text-gray-500 font-medium">
             <p>
-              Showing{" "}
-              <strong className="text-gray-900">{products.length}</strong> of{" "}
-              <strong className="text-gray-900">{totalItems}</strong> Results
+              {t("Products.showing")}{" "}
+              <strong className="text-gray-900">{products.length}</strong>{" "}
+              {t("Products.of")}{" "}
+              <strong className="text-gray-900">{totalItems}</strong>{" "}
+              {t("Products.results")}
             </p>
             <p>
-              Page <strong className="text-orange-500">{currentPage}</strong> of{" "}
+              {t("Products.page")}{" "}
+              <strong className="text-orange-500">{currentPage}</strong>{" "}
+              {t("Products.of")}{" "}
               <strong className="text-gray-900">{totalPages}</strong>
             </p>
           </div>
@@ -573,9 +601,9 @@ export default function Products() {
             <div className="flex flex-col items-center justify-center py-32 bg-white rounded-2xl border border-gray-100 border-dashed">
               <Search size={48} className="text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                No products found
+                {t("Products.noProducts")}
               </h3>
-              <p className="text-gray-500">Try adjusting your filters.</p>
+              <p className="text-gray-500">{t("Products.adjustFilters")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -590,7 +618,9 @@ export default function Products() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-14 mb-10">
+            <div
+              className={`flex items-center justify-center gap-2 mt-14 mb-10 ${isRTL ? "flex-row-reverse" : ""}`}
+            >
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -642,9 +672,11 @@ export default function Products() {
             <div className="mt-16 pt-10 border-t border-gray-200">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  More from this Category
+                  {t("Products.moreFromCategory")}
                 </h2>
-                <div className="flex items-center gap-2">
+                <div
+                  className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                >
                   <button
                     onClick={() => scrollSlider("left")}
                     className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all"

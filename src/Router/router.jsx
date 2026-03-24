@@ -11,6 +11,7 @@ import ProductDetails from "../pages/ProductDetails";
 import About from "../pages/About";
 import Support from "../pages/Support";
 import AuthSuccess from "../pages/AuthSuccess";
+import NeedHelp from "../pages/NeedHelp";
 
 // تأكد إن الاسم هنا "router" سمول
 export const router = createBrowserRouter([
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
 
       { path: "about", element: <About /> },
       { path: "customer-support", element: <Support /> },
+      { path: "help", element: <NeedHelp /> },
 
       {
         path: "login",

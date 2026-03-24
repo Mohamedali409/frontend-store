@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../../utils/api";
+import { useTranslation } from "react-i18next"; // استدعاء مكتبة الترجمة
 import {
   Search,
   ShoppingCart,
@@ -22,32 +23,133 @@ import {
   UserCircle,
   Package,
   ChevronRight,
-  Info, // أيقونة إضافية لصفحة About
+  MessageCircle,
+  Globe, // ضفت أيقونة الكوكب لزرار اللغة
 } from "lucide-react";
 
+// الموك داتا زي ما هي
 const mockCategories = [
-  { name: "Computer & Laptop", icon: <Monitor size={18} /> },
-  { name: "Smartphones & Tablets", icon: <Smartphone size={18} /> },
-  { name: "Camera & Photo", icon: <Camera size={18} /> },
-  { name: "Audio & Headphones", icon: <Headphones size={18} /> },
-  { name: "Wearable Electronics", icon: <Watch size={18} /> },
-  { name: "Gaming Console", icon: <Gamepad2 size={18} /> },
+  {
+    name: "Computer & Laptop",
+    icon: <Monitor size={18} />,
+    subcategories: [
+      "MacBooks",
+      "Gaming Laptops",
+      "Desktops",
+      "Monitors",
+      "PC Components",
+      "Keyboards & Mice",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=300&auto=format&fit=crop",
+  },
+  {
+    name: "Smartphones & Tablets",
+    icon: <Smartphone size={18} />,
+    subcategories: [
+      "Apple iPhones",
+      "Samsung Galaxy",
+      "Android Tablets",
+      "iPads",
+      "Phone Cases",
+      "Power Banks",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=300&auto=format&fit=crop",
+  },
+  {
+    name: "Camera & Photo",
+    icon: <Camera size={18} />,
+    subcategories: [
+      "DSLR Cameras",
+      "Mirrorless",
+      "Lenses",
+      "Tripods",
+      "Drones",
+      "Camera Bags",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=300&auto=format&fit=crop",
+  },
+  {
+    name: "Audio & Headphones",
+    icon: <Headphones size={18} />,
+    subcategories: [
+      "Wireless Earbuds",
+      "Over-Ear Headphones",
+      "Bluetooth Speakers",
+      "Home Theater",
+      "Microphones",
+      "Cables",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=300&auto=format&fit=crop",
+  },
+  {
+    name: "Wearable Electronics",
+    icon: <Watch size={18} />,
+    subcategories: [
+      "Apple Watches",
+      "Fitness Trackers",
+      "Smart Rings",
+      "VR Headsets",
+      "Watch Bands",
+      "Screen Protectors",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=300&auto=format&fit=crop",
+  },
+  {
+    name: "Gaming Console",
+    icon: <Gamepad2 size={18} />,
+    subcategories: [
+      "PlayStation 5",
+      "Xbox Series X",
+      "Nintendo Switch",
+      "Gaming Controllers",
+      "Video Games",
+      "Gaming Chairs",
+    ],
+    image:
+      "https://images.unsplash.com/photo-1486401899868-0e435ed85128?q=80&w=300&auto=format&fit=crop",
+  },
 ];
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // استدعاء الـ hooks الخاصة باللغة
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar"; // متغير بيعرفنا إحنا عربي ولا إنجليزي
+
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
 
   const userRef = useRef(null);
   const categoryRef = useRef(null);
 
-  // إغلاق القوائم عند الضغط بالخارج
+  const whatsappNumber = "201284040815";
+  const welcomeMessage = "مرحباً فريق AlyShope، أود الاستفسار عن...";
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(welcomeMessage)}`;
+
+  // Effect عشان يغير اتجاه الصفحة بناءً على اللغة
+  useEffect(() => {
+    document.dir = isRtl ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language, isRtl]);
+
+  // دالة تغيير اللغة
+  const toggleLanguage = () => {
+    const newLang = i18n.language === "en" ? "ar" : "en";
+    i18n.changeLanguage(newLang);
+  };
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (userRef.current && !userRef.current.contains(e.target))
@@ -59,12 +161,8 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // جلب عدد المنتجات
   const fetchCartCount = async () => {
-    if (!isAuthenticated) {
-      setCartCount(0);
-      return;
-    }
+    if (!isAuthenticated) return setCartCount(0);
     try {
       const response = await api.get("/cart");
       if (response.data.success && response.data.cart) {
@@ -86,45 +184,54 @@ export default function Header() {
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setMobileMenuOpen(false);
+      setSearchQuery("");
     }
   };
 
   return (
-    <div className="bg-white relative z-[100] shadow-sm border-b border-gray-100">
+    <div className="sticky top-0 z-[100] w-full bg-white shadow-sm border-b border-gray-100 transition-all">
       {/* 1. Top Bar */}
-      <div className="hidden md:block bg-[#1B6392] text-white py-2 text-[11px] font-medium">
+      <div className="hidden md:block bg-[#1B6392] text-white py-1.5 text-xs font-medium">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <p className="opacity-90 tracking-wide">
-            Welcome to Aly Shope online store!
+            {t("welcome_msg", "Welcome to Aly Shope online store!")}
           </p>
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
+            {/* زرار تغيير اللغة */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors bg-white/10 px-2 py-0.5 rounded-md"
+            >
+              <Globe size={14} />
+              {isRtl ? "English" : "العربية"}
+            </button>
             <Link
               to="/track-order"
               className="hover:text-orange-400 transition-colors"
             >
-              Track Order
+              {t("track_order", "Track Order")}
             </Link>
             <Link
               to="/help"
               className="hover:text-orange-400 transition-colors"
             >
-              Need Help
+              {t("need_help", "Need Help")}
             </Link>
           </div>
         </div>
       </div>
 
       {/* 2. Main Header */}
-      <div className="max-w-7xl mx-auto px-4 py-3 md:py-5 flex items-center justify-between gap-4 md:gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between gap-4 md:gap-8">
         <div className="flex items-center gap-3">
           <button
-            className="md:hidden p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-full"
+            className="md:hidden p-2 -ms-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
             onClick={() => setMobileMenuOpen(true)}
           >
             <Menu size={24} />
           </button>
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 md:w-11 md:h-11 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
+            <div className="w-9 h-9 md:w-10 md:h-10 bg-[#FA8232] rounded-xl flex items-center justify-center shadow-md group-hover:rotate-6 transition-transform">
               <span className="text-white font-black text-xl md:text-2xl italic">
                 A
               </span>
@@ -135,40 +242,40 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Search Input */}
+        {/* Desktop Search Input */}
         <div className="hidden md:flex flex-1 max-w-2xl relative">
           <input
             type="text"
-            placeholder="Search for anything..."
+            placeholder={t("search_placeholder", "Search for anything...")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-5 pr-12 text-sm focus:bg-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-5 pe-14 text-sm focus:bg-white focus:ring-2 focus:ring-[#FA8232]/30 focus:border-[#FA8232] transition-all outline-none"
           />
           <button
             onClick={handleSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-orange-500"
+            className="absolute end-2 top-1/2 -translate-y-1/2 p-1.5 bg-[#FA8232] text-white rounded-lg hover:bg-[#e5762b] transition-colors"
           >
-            <Search size={20} />
+            <Search size={18} />
           </button>
         </div>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-2 md:gap-5">
+        <div className="flex items-center gap-2 md:gap-4">
           <Link
             to="/wishlist"
-            className="p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all hidden sm:flex"
+            className="p-2 text-gray-600 hover:text-[#FA8232] hover:bg-orange-50 rounded-full transition-all hidden sm:flex"
           >
-            <Heart size={24} />
+            <Heart size={22} />
           </Link>
 
           <Link
             to="/cart"
-            className="p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all relative"
+            className="p-2 text-gray-600 hover:text-[#FA8232] hover:bg-orange-50 rounded-full transition-all relative"
           >
-            <ShoppingCart size={24} />
+            <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute top-1 right-1 bg-orange-600 text-white text-[10px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">
+              <span className="absolute top-0 end-0 bg-red-500 text-white text-[10px] w-4 h-4 md:w-4.5 md:h-4.5 rounded-full flex items-center justify-center font-bold border-2 border-white">
                 {cartCount}
               </span>
             )}
@@ -178,10 +285,10 @@ export default function Header() {
           <div className="relative" ref={userRef}>
             <button
               onClick={() => setUserOpen(!userOpen)}
-              className="flex items-center gap-2 p-1 md:bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all border border-transparent md:border-gray-100"
+              className="flex items-center gap-2 p-1 md:pe-3 md:bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all border border-transparent md:border-gray-100"
             >
               <div
-                className={`w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden flex items-center justify-center ${isAuthenticated ? "bg-orange-500" : "bg-gray-200"}`}
+                className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center ${isAuthenticated ? "bg-[#FA8232]" : "bg-gray-200"}`}
               >
                 {isAuthenticated && user?.image ? (
                   <img
@@ -191,7 +298,7 @@ export default function Header() {
                   />
                 ) : (
                   <User
-                    size={18}
+                    size={16}
                     className={isAuthenticated ? "text-white" : "text-gray-500"}
                     strokeWidth={2.5}
                   />
@@ -209,33 +316,31 @@ export default function Header() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full right-0 mt-3 w-64 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden py-2"
+                  className="absolute top-full end-0 mt-3 w-60 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden py-2"
                 >
                   {isAuthenticated ? (
                     <>
                       <div className="px-5 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
                         <p className="text-sm font-bold text-gray-900 truncate">
-                          {" "}
-                          {user?.name}{" "}
+                          {user?.name}
                         </p>
                         <p className="text-[11px] text-gray-500 truncate">
-                          {" "}
-                          {user?.email}{" "}
+                          {user?.email}
                         </p>
                       </div>
                       <Link
                         to="/profile"
                         onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-600 hover:bg-orange-50 hover:text-[#FA8232]"
                       >
-                        <UserCircle size={18} /> My Profile
+                        <UserCircle size={18} /> {t("my_profile", "My Profile")}
                       </Link>
                       <Link
                         to="/orders"
                         onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-600 hover:bg-orange-50 hover:text-[#FA8232]"
                       >
-                        <Package size={18} /> My Orders
+                        <Package size={18} /> {t("my_orders", "My Orders")}
                       </Link>
                       <button
                         onClick={() => {
@@ -245,7 +350,7 @@ export default function Header() {
                         }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 font-semibold border-t border-gray-50 mt-1"
                       >
-                        <LogOut size={18} /> Sign Out
+                        <LogOut size={18} /> {t("sign_out", "Sign Out")}
                       </button>
                     </>
                   ) : (
@@ -253,9 +358,9 @@ export default function Header() {
                       <Link
                         to="/login"
                         onClick={() => setUserOpen(false)}
-                        className="block w-full bg-orange-500 text-white text-center py-2.5 rounded-xl font-bold hover:bg-orange-600 shadow-md"
+                        className="block w-full bg-[#FA8232] text-white text-center py-2.5 rounded-xl font-bold hover:bg-[#e5762b] shadow-md"
                       >
-                        Login / Register
+                        {t("login_register", "Login / Register")}
                       </Link>
                     </div>
                   )}
@@ -266,16 +371,16 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Categories & Navigation Bar */}
+      {/* 3. Categories & Navigation Bar (Desktop Only) */}
       <div className="hidden md:block border-t border-gray-50">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="relative" ref={categoryRef}>
               <button
                 onClick={() => setCategoryOpen(!categoryOpen)}
-                className={`flex items-center gap-3 py-3 px-6 text-sm font-bold transition-all ${categoryOpen ? "bg-orange-500 text-white" : "text-gray-900 hover:text-orange-500 bg-gray-50"}`}
+                className={`flex items-center gap-3 py-3 px-6 text-sm font-bold transition-all ${categoryOpen ? "bg-[#FA8232] text-white" : "text-gray-900 hover:text-[#FA8232] bg-gray-50"}`}
               >
-                <Menu size={18} /> ALL CATEGORIES
+                <Menu size={18} /> {t("all_categories", "ALL CATEGORIES")}
                 <ChevronDown
                   size={16}
                   className={`transition-transform ${categoryOpen ? "rotate-180" : ""}`}
@@ -288,66 +393,116 @@ export default function Header() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 15 }}
-                    className="absolute top-full left-0 w-72 bg-white border border-gray-100 shadow-2xl rounded-b-2xl py-2"
+                    className="absolute top-full start-0 w-[800px] bg-white border border-gray-100 shadow-2xl rounded-b-2xl flex overflow-hidden"
                   >
-                    {mockCategories.map((cat) => (
-                      <Link
-                        key={cat.name}
-                        to={`/products?category=${cat.name}`}
-                        onClick={() => setCategoryOpen(false)}
-                        className="flex items-center justify-between px-6 py-3.5 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-500 group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-gray-400 group-hover:text-orange-500">
-                            {cat.icon}
-                          </span>
-                          {cat.name}
+                    <div className="w-1/3 border-e border-gray-100 bg-gray-50/50 py-2">
+                      {mockCategories.map((cat) => (
+                        <div
+                          key={cat.name}
+                          onMouseEnter={() => setActiveCategory(cat)}
+                          onClick={() => {
+                            navigate(`/products?category=${cat.name}`);
+                            setCategoryOpen(false);
+                          }}
+                          className={`flex items-center justify-between px-6 py-3.5 text-sm cursor-pointer transition-colors ${
+                            activeCategory.name === cat.name
+                              ? "bg-white text-[#FA8232] font-bold border-s-4 border-[#FA8232] shadow-sm relative z-10"
+                              : "text-gray-600 hover:bg-orange-50 hover:text-[#FA8232] border-s-4 border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={
+                                activeCategory.name === cat.name
+                                  ? "text-[#FA8232]"
+                                  : "text-gray-400"
+                              }
+                            >
+                              {cat.icon}
+                            </span>
+                            {/* تم إضافة الترجمة هنا */}
+                            {t(cat.name)}
+                          </div>
+                          <ChevronRight
+                            size={16}
+                            className={`transition-all ${isRtl ? "rotate-180" : ""} ${activeCategory.name === cat.name ? "opacity-100 text-[#FA8232]" : "opacity-0"}`}
+                          />
                         </div>
-                        <ChevronRight
-                          size={14}
-                          className="opacity-0 group-hover:opacity-100 transition-all"
-                        />
-                      </Link>
-                    ))}
+                      ))}
+                    </div>
+
+                    <div className="w-2/3 p-8 bg-white flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-bold text-lg text-gray-900 border-b border-gray-100 pb-3 mb-5 flex items-center justify-between">
+                          {/* تم إضافة الترجمة هنا */}
+                          {t(activeCategory.name)}
+                          <span className="text-xs text-[#FA8232] font-semibold cursor-pointer hover:underline">
+                            {t("view_all", "View All")}
+                          </span>
+                        </h3>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                          {activeCategory.subcategories.map((sub) => (
+                            <Link
+                              key={sub}
+                              to={`/products?category=${activeCategory.name}&subcategory=${sub}`}
+                              onClick={() => setCategoryOpen(false)}
+                              className={`text-sm text-gray-600 hover:text-[#FA8232] transition-transform flex items-center gap-2 before:content-[''] before:w-1 before:h-1 before:bg-gray-300 before:rounded-full hover:before:bg-[#FA8232] ${isRtl ? "hover:-translate-x-1" : "hover:translate-x-1"}`}
+                            >
+                              {/* تم إضافة الترجمة هنا للأقسام الفرعية */}
+                              {t(sub)}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Desktop Navigation مع إضافة About Us */}
-            <nav className="flex gap-8 text-sm font-semibold text-gray-500">
+            <nav className="flex gap-8 text-sm font-semibold text-gray-600">
               <Link
                 to="/products"
-                className="hover:text-orange-500 transition-colors"
+                className="hover:text-[#FA8232] transition-colors"
               >
-                Shop All
+                {t("shop_all", "Shop All")}
               </Link>
               <Link
                 to="/hot-deals"
-                className="hover:text-orange-500 flex items-center gap-1.5"
+                className="hover:text-[#FA8232] flex items-center gap-1.5 text-red-500"
               >
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>{" "}
-                Hot Deals
+                {t("hot_deals", "Hot Deals")}
               </Link>
               <Link
                 to="/about"
-                className="hover:text-orange-500 transition-colors"
+                className="hover:text-[#FA8232] transition-colors"
               >
-                About Us
+                {t("about_us", "About Us")}
               </Link>
-              <Link to="/customer-support" className="hover:text-orange-500">
-                Support
+              <Link to="/customer-support" className="hover:text-[#FA8232]">
+                {t("support", "Support")}
               </Link>
             </nav>
           </div>
-          <div className="flex items-center gap-2 text-gray-900 font-bold">
-            <Phone size={18} className="text-orange-500" />
-            <span className="text-sm">+1-202-555-0104</span>
-          </div>
+
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 text-gray-900 font-bold hover:text-green-600 transition-colors"
+          >
+            <div className="bg-green-50 group-hover:bg-green-100 p-2 rounded-full transition-colors">
+              <Phone size={16} className="text-green-600" />
+            </div>
+            <span className="text-sm" dir="ltr">
+              +20-128-404-0815
+            </span>
+          </a>
         </div>
       </div>
 
-      {/* 4. Mobile Side Menu */}
+      {/* 4. Mobile Side Menu & Search */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -359,89 +514,178 @@ export default function Header() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110]"
             />
             <motion.div
-              initial={{ x: "-100%" }}
+              initial={{ x: isRtl ? "100%" : "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              className="fixed top-0 left-0 bottom-0 w-[80%] max-w-xs bg-white z-[120] p-6 shadow-2xl"
+              exit={{ x: isRtl ? "100%" : "-100%" }}
+              transition={{ type: "tween", duration: 0.3 }}
+              className="fixed top-0 start-0 bottom-0 w-[85%] max-w-sm bg-white z-[120] flex flex-col shadow-2xl"
             >
-              <div className="flex justify-between items-center mb-8 border-b pb-4">
-                <span className="text-orange-500 font-black text-2xl italic tracking-tighter">
-                  AlyShope
-                </span>
-                <div
-                  className="bg-gray-100 p-2 rounded-full cursor-pointer"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <X size={20} className="text-gray-500" />
+              {/* Mobile Header Inside Menu */}
+              <div className="p-5 flex justify-between items-center border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-[#FA8232] rounded-lg flex items-center justify-center">
+                    <span className="text-white font-black text-xl italic">
+                      A
+                    </span>
+                  </div>
+                  <span className="text-[#191C1F] font-black text-xl tracking-tighter">
+                    AlyShope
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={toggleLanguage}
+                    className="flex items-center gap-1 text-sm font-bold text-[#FA8232] bg-orange-50 px-2 py-1 rounded-md"
+                  >
+                    <Globe size={16} />
+                    {isRtl ? "EN" : "عربي"}
+                  </button>
+                  <button
+                    className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <X size={20} className="text-gray-500" />
+                  </button>
                 </div>
               </div>
-              <div className="flex flex-col gap-6 font-bold text-gray-800">
+
+              {/* Mobile Search */}
+              <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={t("search_placeholder", "Search products...")}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    className="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-4 pe-12 text-sm focus:outline-none focus:border-[#FA8232]"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="absolute end-0 top-0 bottom-0 px-3 text-gray-400 hover:text-[#FA8232] bg-transparent"
+                  >
+                    <Search size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile Links & Categories */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-4 font-bold text-gray-800">
                 <Link
                   to="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 hover:text-orange-500"
+                  className="block hover:text-[#FA8232]"
                 >
-                  Home
+                  {t("home", "Home")}
                 </Link>
                 <Link
                   to="/products"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-orange-500"
+                  className="block hover:text-[#FA8232]"
                 >
-                  Shop
+                  {t("shop_all", "Shop All")}
                 </Link>
-                {/* لينك About Us في الموبايل */}
+
+                {/* Categories in Mobile */}
+                <div className="border-t border-b border-gray-100 py-2 my-2">
+                  <button
+                    onClick={() => setMobileCategoryOpen(!mobileCategoryOpen)}
+                    className="flex items-center justify-between w-full py-2 hover:text-[#FA8232]"
+                  >
+                    <span>{t("categories", "Categories")}</span>
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform ${mobileCategoryOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {mobileCategoryOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="ps-4 py-2 space-y-3 font-semibold text-sm text-gray-600">
+                          {mockCategories.map((cat) => (
+                            <Link
+                              key={cat.name}
+                              to={`/products?category=${cat.name}`}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block hover:text-[#FA8232]"
+                            >
+                              {/* تم إضافة الترجمة هنا لأقسام الموبايل */}
+                              {t(cat.name)}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <Link
                   to="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 hover:text-orange-500"
+                  className="block hover:text-[#FA8232]"
                 >
-                  About Us
-                </Link>
-                <Link
-                  to="/cart"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex justify-between items-center hover:text-orange-500"
-                >
-                  Cart{" "}
-                  <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs">
-                    {cartCount}
-                  </span>
+                  {t("about_us", "About Us")}
                 </Link>
 
-                <hr className="border-gray-100" />
+                <hr className="border-gray-100 my-4" />
 
                 {!isAuthenticated ? (
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="mt-4 bg-orange-500 text-white text-center py-3 rounded-xl shadow-lg shadow-orange-100"
+                    className="block w-full bg-[#FA8232] text-white text-center py-3 rounded-xl shadow-lg shadow-orange-100"
                   >
-                    Login / Register
+                    {t("login_register", "Login / Register")}
                   </Link>
                 ) : (
-                  <div className="space-y-4">
-                    <p className="text-xs text-gray-400 uppercase tracking-widest">
-                      Account
+                  <div className="space-y-4 bg-gray-50 p-4 rounded-xl">
+                    <p className="text-xs text-gray-400 uppercase tracking-widest border-b pb-2">
+                      {t("my_account", "My Account")}
                     </p>
                     <Link
                       to="/profile"
                       onClick={() => setMobileMenuOpen(false)}
                       className="block text-sm"
                     >
-                      My Profile
+                      {t("my_profile", "My Profile")}
+                    </Link>
+                    <Link
+                      to="/orders"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-sm"
+                    >
+                      {t("my_orders", "My Orders")}
                     </Link>
                     <button
                       onClick={() => {
                         logout();
                         setMobileMenuOpen(false);
                       }}
-                      className="text-red-500 text-sm flex items-center gap-2 pt-2"
+                      className="text-red-500 text-sm flex items-center gap-2 pt-2 border-t w-full"
                     >
-                      <LogOut size={16} /> Logout
+                      <LogOut size={16} /> {t("sign_out", "Logout")}
                     </button>
                   </div>
                 )}
+              </div>
+
+              {/* Whatsapp Mobile Footer */}
+              <div className="p-5 bg-gray-50 border-t border-gray-200">
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-[#25D366] text-white py-3 rounded-xl font-bold hover:bg-[#1da851] transition-colors shadow-md"
+                >
+                  <MessageCircle size={20} />{" "}
+                  {t("whatsapp_contact", "تواصل معنا واتساب")}
+                </a>
               </div>
             </motion.div>
           </>
