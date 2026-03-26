@@ -19,7 +19,6 @@ export default function ProductDetails() {
   const { id } = useParams();
   const { t } = useTranslation();
 
-  // --- States ---
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -27,7 +26,6 @@ export default function ProductDetails() {
   const [activeTab, setActiveTab] = useState("description");
   const [toast, setToast] = useState(null);
 
-  // دالة معالجة الصور
   const getImageUrl = (imagePath) => {
     if (!imagePath)
       return "https://placehold.co/600x400/f3f4f6/6b7280?text=No+Image";
@@ -40,7 +38,6 @@ export default function ProductDetails() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // جلب بيانات المنتج
   useEffect(() => {
     const fetchProductDetails = async () => {
       setIsLoading(true);
@@ -58,7 +55,6 @@ export default function ProductDetails() {
     if (id) fetchProductDetails();
   }, [id]);
 
-  // إضافة للسلة
   const handleAddToCart = async () => {
     try {
       const response = await api.post("/cart", {
@@ -71,14 +67,14 @@ export default function ProductDetails() {
         response.status === 201 ||
         response.data.success
       ) {
-        showToast(`${t("product.addedToCart")} 🛒`);
+        showToast(`${t("product.addedToCart")}`);
         setTimeout(() => window.dispatchEvent(new Event("cartUpdated")), 100);
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        showToast(`${t("product.loginFirst")} ⚠️`);
+        showToast(`${t("product.loginFirst")}`);
       } else {
-        showToast(`${t("product.errorAdding")} ❌`);
+        showToast(`${t("product.errorAdding")}`);
       }
     }
   };
@@ -105,29 +101,19 @@ export default function ProductDetails() {
     "https://placehold.co/600x400/d1d5db/6b7280?text=Top+View",
   ];
 
-  // مصفوفة الـ Tabs المترجمة
   const tabs = ["description", "additional_info", "specification", "review"];
 
   return (
     <div className="bg-white min-h-screen pb-16 relative">
-      {/* Toast Notification */}
       {toast && (
         <div className="fixed bottom-6 right-6 left-6 md:left-auto md:w-80 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4">
-          <CheckCircle2
-            size={20}
-            className={
-              toast.includes("❌") || toast.includes("⚠️")
-                ? "text-red-400"
-                : "text-green-400"
-            }
-          />
+          <CheckCircle2 size={20} />
           <span className="text-sm font-medium">{toast}</span>
         </div>
       )}
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* --- اليسار: الجاليري --- */}
           <div className="flex flex-col gap-4">
             <div className="w-full aspect-square md:aspect-[4/3] bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center p-8 overflow-hidden group">
               <img
@@ -136,7 +122,7 @@ export default function ProductDetails() {
                 className="max-w-full max-h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
               />
             </div>
-            {/* المصغرات */}
+
             <div className="flex items-center gap-3 relative px-8">
               <button className="absolute left-0 w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-md z-10 rtl:rotate-180">
                 <ChevronLeft size={20} />
@@ -166,7 +152,6 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* --- اليمين: معلومات المنتج --- */}
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center text-orange-400">

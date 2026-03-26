@@ -31,7 +31,7 @@ export default function About() {
       className=" min-h-screen bg-[#F8F9FD] pt-10 pb-20"
     >
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* --- Hero Section --- */}
+       
         <motion.div
           variants={itemVariants}
           className="text-center max-w-3xl mx-auto mb-16"
@@ -47,7 +47,7 @@ export default function About() {
           </p>
         </motion.div>
 
-        {/* --- Stats Section --- */}
+   
         <motion.div
           variants={itemVariants}
           className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
@@ -75,7 +75,7 @@ export default function About() {
           ))}
         </motion.div>
 
-        {/* --- Core Values Section --- */}
+  
         <motion.div
           variants={itemVariants}
           className="bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-xl shadow-gray-100"

@@ -3,29 +3,23 @@ import { DataContext } from "./DataContext";
 import api from "../utils/api"; // استيراد الـ axios instance
 
 export default function DataProvider({ children }) {
-  // States للمنتجات
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState(null);
 
-  // States للأقسام
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [categoriesError, setCategoriesError] = useState(null);
 
-  // دالة جلب المنتجات باستخدام Axios
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
-      // مفيش داعي نكتب الرابط كامل لأننا عرفناه في الـ baseURL
+
       const response = await api.get("/products");
 
-      // Axios بيحط الداتا في response.data
-      // (لو الباك اند بيرجع الداتا جوه object اسمه data، هتبقى response.data.data)
       setProducts(response.data);
       setProductsError(null);
     } catch (err) {
-      // Axios بيحط رسالة الخطأ اللي جاية من الباك اند في err.response.data
       const errorMessage = err.response?.data?.message || err.message;
       setProductsError(errorMessage);
     } finally {
@@ -33,7 +27,6 @@ export default function DataProvider({ children }) {
     }
   };
 
-  // دالة جلب الأقسام باستخدام Axios
   const fetchCategories = async () => {
     try {
       setLoadingCategories(true);

@@ -76,7 +76,6 @@ export default function NeedHelp() {
           </div>
         </div>
 
-        {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {helpCategories.map((category) => {
             const Icon = category.icon;
@@ -97,7 +96,6 @@ export default function NeedHelp() {
           })}
         </div>
 
-        {/* FAQ & Contact */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             <h2 className="text-2xl font-black text-gray-900 mb-6">

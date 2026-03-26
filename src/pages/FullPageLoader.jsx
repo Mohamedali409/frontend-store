@@ -10,7 +10,6 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-// تم تغيير الـ label ليكون مفتاح الترجمة بدلاً من النص المباشر
 const iconsData = [
   { id: 1, icon: Smartphone, labelKey: "Smartphones & Tablets" },
   { id: 2, icon: Laptop, labelKey: "Computer & Laptop" },

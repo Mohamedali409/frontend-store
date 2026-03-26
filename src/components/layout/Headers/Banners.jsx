@@ -3,14 +3,12 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 
 const Banners = () => {
-  // إضافة State للتحكم في ظهور البانر
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
 
   return (
     <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-[#191C1F] px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
-      {/* الـ Gradient الخلفي الأيسر - تم تغيير الألوان لـ Orange و White */}
       <div
         aria-hidden="true"
         className="absolute top-1/2 left-[max(-7rem,calc(50%-52rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl opacity-30"
@@ -24,7 +22,6 @@ const Banners = () => {
         />
       </div>
 
-      {/* الـ Gradient الخلفي الأيمن */}
       <div
         aria-hidden="true"
         className="absolute top-1/2 left-[max(45rem,calc(50%+8rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl opacity-30"
@@ -38,7 +35,6 @@ const Banners = () => {
         />
       </div>
 
-      {/* المحتوى النصي والزرار */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <p className="text-sm leading-6 text-white flex items-center gap-2">
           <strong className="font-semibold text-[#FA8232]">SUMMER SALE</strong>

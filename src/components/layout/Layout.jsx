@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
 import Footer from "./Footer";
 import { Outlet, useNavigation } from "react-router-dom";
-import Banners from "../Headers/Banners";
-import Header from "../Headers/NavbarTest";
+import Banners from "./Headers/Banners";
+import Header from "./Headers/Navbar";
 import ScrollToTop from "../ScrollToTop";
 import nprogress from "nprogress";
 import "nprogress/nprogress.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-// ... (كود الـ PageLoader زي ما هو مفيش فيه تغيير)
 
 function Layout() {
   const navigation = useNavigation();
@@ -24,7 +22,6 @@ function Layout() {
   }, [isLoading]);
 
   return (
-    // ضفت bg-white كخلفية أساسية للموقع كله (ممكن تغيرها لـ bg-[#F8F9FA] لو حابب)
     <div className="flex flex-col min-h-screen relative bg-white w-full overflow-x-hidden">
       <ScrollToTop />
 
@@ -33,7 +30,6 @@ function Layout() {
       <Banners />
       <Header />
 
-      {/* التعديل السحري هنا 👇 */}
       <main className="flex-grow flex flex-col w-full">
         <Outlet />
       </main>

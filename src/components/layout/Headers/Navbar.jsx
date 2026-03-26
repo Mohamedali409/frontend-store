@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "../../utils/api";
-import { useTranslation } from "react-i18next"; // استدعاء مكتبة الترجمة
+import api from "../../../utils/api";
+import { useTranslation } from "react-i18next";
 import {
   Search,
   ShoppingCart,
@@ -24,10 +24,9 @@ import {
   Package,
   ChevronRight,
   MessageCircle,
-  Globe, // ضفت أيقونة الكوكب لزرار اللغة
+  Globe,
 } from "lucide-react";
 
-// الموك داتا زي ما هي
 const mockCategories = [
   {
     name: "Computer & Laptop",
@@ -121,7 +120,7 @@ export default function Header() {
 
   // استدعاء الـ hooks الخاصة باللغة
   const { t, i18n } = useTranslation();
-  const isRtl = i18n.language === "ar"; // متغير بيعرفنا إحنا عربي ولا إنجليزي
+  const isRtl = i18n.language === "ar";
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -138,7 +137,6 @@ export default function Header() {
   const welcomeMessage = "مرحباً فريق AlyShope، أود الاستفسار عن...";
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(welcomeMessage)}`;
 
-  // Effect عشان يغير اتجاه الصفحة بناءً على اللغة
   useEffect(() => {
     document.dir = isRtl ? "rtl" : "ltr";
     document.documentElement.lang = i18n.language;
@@ -197,7 +195,6 @@ export default function Header() {
             {t("welcome_msg", "Welcome to Aly Shope online store!")}
           </p>
           <div className="flex gap-6 items-center">
-            {/* زرار تغيير اللغة */}
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-1.5 hover:text-orange-400 transition-colors bg-white/10 px-2 py-0.5 rounded-md"
@@ -221,7 +218,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header */}
       <div className="max-w-7xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between gap-4 md:gap-8">
         <div className="flex items-center gap-3">
           <button
@@ -260,7 +256,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Action Icons */}
         <div className="flex items-center gap-2 md:gap-4">
           <Link
             to="/wishlist"
@@ -281,7 +276,6 @@ export default function Header() {
             )}
           </Link>
 
-          {/* User Account Section */}
           <div className="relative" ref={userRef}>
             <button
               onClick={() => setUserOpen(!userOpen)}
@@ -371,7 +365,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Categories & Navigation Bar (Desktop Only) */}
       <div className="hidden md:block border-t border-gray-50">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
@@ -420,7 +413,7 @@ export default function Header() {
                             >
                               {cat.icon}
                             </span>
-                            {/* تم إضافة الترجمة هنا */}
+
                             {t(cat.name)}
                           </div>
                           <ChevronRight
@@ -448,7 +441,6 @@ export default function Header() {
                               onClick={() => setCategoryOpen(false)}
                               className={`text-sm text-gray-600 hover:text-[#FA8232] transition-transform flex items-center gap-2 before:content-[''] before:w-1 before:h-1 before:bg-gray-300 before:rounded-full hover:before:bg-[#FA8232] ${isRtl ? "hover:-translate-x-1" : "hover:translate-x-1"}`}
                             >
-                              {/* تم إضافة الترجمة هنا للأقسام الفرعية */}
                               {t(sub)}
                             </Link>
                           ))}
@@ -502,7 +494,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 4. Mobile Side Menu & Search */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -550,7 +541,6 @@ export default function Header() {
                 </div>
               </div>
 
-              {/* Mobile Search */}
               <div className="p-5 border-b border-gray-100 bg-gray-50/50">
                 <div className="relative">
                   <input
@@ -570,7 +560,6 @@ export default function Header() {
                 </div>
               </div>
 
-              {/* Mobile Links & Categories */}
               <div className="flex-1 overflow-y-auto p-5 space-y-4 font-bold text-gray-800">
                 <Link
                   to="/"
@@ -615,7 +604,6 @@ export default function Header() {
                               onClick={() => setMobileMenuOpen(false)}
                               className="block hover:text-[#FA8232]"
                             >
-                              {/* تم إضافة الترجمة هنا لأقسام الموبايل */}
                               {t(cat.name)}
                             </Link>
                           ))}
@@ -675,7 +663,6 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Whatsapp Mobile Footer */}
               <div className="p-5 bg-gray-50 border-t border-gray-200">
                 <a
                   href={whatsappLink}

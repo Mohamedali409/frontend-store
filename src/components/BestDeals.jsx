@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Heart, Eye, Star, ArrowRight, X } from "lucide-react";
 
-// =========================================
-// 1. مكون العداد (Countdown Timer)
-// =========================================
-// تم تمرير تاريخ النهاية كـ Prop ليكون أكثر مرونة
 const CountdownTimer = ({ targetDateString }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -16,7 +12,6 @@ const CountdownTimer = ({ targetDateString }) => {
   });
 
   useEffect(() => {
-    // تحديد تاريخ الانتهاء الفعلي
     const targetDate = new Date(targetDateString).getTime();
 
     const interval = setInterval(() => {
@@ -51,9 +46,6 @@ const CountdownTimer = ({ targetDateString }) => {
   );
 };
 
-// =========================================
-// 2. البيانات الوهمية (Mock Data)
-// =========================================
 const featuredProduct = {
   id: "f1",
   name: "Xbox Series S - 512GB SSD Console with Wireless Controller - EU Versio...",
@@ -135,9 +127,6 @@ const smallProducts = [
   },
 ];
 
-// =========================================
-// 3. المكون الرئيسي (Best Deals)
-// =========================================
 export default function BestDeals() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
 
@@ -149,7 +138,6 @@ export default function BestDeals() {
 
   const closeQuickView = () => setQuickViewProduct(null);
 
-  // إغلاق نافذة Quick View عند الضغط على زر Escape في لوحة المفاتيح
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") closeQuickView();
@@ -186,9 +174,6 @@ export default function BestDeals() {
 
       {/* Grid Layout Container */}
       <div className="border border-gray-200 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 bg-white rounded-sm overflow-hidden">
-        {/* =========================================
-            1. Featured Product 
-           ========================================= */}
         <div className="col-span-2 md:col-span-4 lg:col-span-1 lg:row-span-2 border-b lg:border-b-0 lg:border-r border-gray-200 p-5 flex flex-col relative group bg-white">
           {/* Badges */}
           <div className="absolute top-5 left-5 z-10 flex flex-col gap-1.5 items-start">
@@ -204,7 +189,6 @@ export default function BestDeals() {
             )}
           </div>
 
-          {/* Product Image */}
           <Link
             to={`/product/${featuredProduct.id}`}
             className="block relative overflow-hidden mb-5 mt-4 focus:outline-none focus:ring-2 focus:ring-[#2DB2FF]"
@@ -217,7 +201,6 @@ export default function BestDeals() {
             />
           </Link>
 
-          {/* Product Info */}
           <div className="flex flex-col flex-grow">
             <div className="flex items-center gap-1 mb-2">
               <div className="flex gap-0.5 text-[#F3DE6D]">
@@ -278,9 +261,6 @@ export default function BestDeals() {
           </div>
         </div>
 
-        {/* =========================================
-            2. Small Products Grid 
-           ========================================= */}
         {smallProducts.map((product, index) => (
           <div
             key={product.id}
@@ -290,7 +270,6 @@ export default function BestDeals() {
                 : "border-b border-gray-200"
             }`}
           >
-            {/* Badges */}
             <div className="absolute top-3 left-3 z-10 flex flex-col gap-1 items-start">
               {product.soldOut && (
                 <span className="bg-gray-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
@@ -322,7 +301,6 @@ export default function BestDeals() {
                 />
               </Link>
 
-              {/* Hover Actions */}
               <div className="absolute inset-0 bg-black/5 opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none hidden lg:flex">
                 <div className="flex gap-2 pointer-events-auto transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   <button
@@ -373,7 +351,6 @@ export default function BestDeals() {
         ))}
       </div>
 
-      {/* Quick View Modal */}
       <AnimatePresence>
         {quickViewProduct && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 md:p-10">

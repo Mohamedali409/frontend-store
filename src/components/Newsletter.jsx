@@ -7,14 +7,11 @@ export default function Newsletter() {
   const isRTL = i18n.language === "ar";
 
   return (
-    // خلفية متدرجة (Gradient) لتعطي إحساساً بالفخامة والعمق
     <section className="bg-gradient-to-r from-[#1B6392] to-[#12415D] py-20 md:py-28 relative overflow-hidden">
-      {/* عناصر ديكورية خلفية (دوائر ناعمة) */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-black/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
 
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-        {/* 1. النصوص */}
         <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
           {t("Newsletter.title")}
         </h2>
@@ -22,7 +19,6 @@ export default function Newsletter() {
           {t("Newsletter.desc")}
         </p>
 
-        {/* 2. نموذج الإدخال (Modern Glass Form) */}
         <form
           onSubmit={(e) => e.preventDefault()}
           className={`bg-white p-2 rounded-full flex items-center max-w-2xl mx-auto shadow-2xl shadow-black/20 ${
@@ -48,7 +44,6 @@ export default function Newsletter() {
           </button>
         </form>
 
-        {/* 3. شريط العلامات التجارية (Brands) بتنسيق راقي */}
         <div className="mt-20">
           <div className="flex items-center justify-center gap-4 mb-10">
             <div className="h-px bg-white/10 w-12 md:w-20"></div>

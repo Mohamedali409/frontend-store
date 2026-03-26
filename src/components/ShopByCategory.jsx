@@ -3,9 +3,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../utils/api";
 
-// =========================================
-// البيانات الاحتياطية (Fallback / Mock Data)
-// =========================================
 const fallbackCategories = [
   {
     id: 1,
@@ -15,13 +12,13 @@ const fallbackCategories = [
   },
   {
     id: 2,
-    name: "Smartphones & Tablets", // غيرتها عشان تطابق المسميات في الـ Header
+    name: "Smartphones & Tablets",
     image:
       "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?auto=format&fit=crop&q=80&w=300",
   },
   {
     id: 3,
-    name: "Audio & Headphones", // غيرتها عشان تطابق
+    name: "Audio & Headphones",
     image:
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300",
   },
@@ -45,7 +42,7 @@ const fallbackCategories = [
   },
   {
     id: 7,
-    name: "Wearable Electronics", // غيرتها عشان تطابق
+    name: "Wearable Electronics",
     image:
       "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=300",
   },
@@ -91,7 +88,6 @@ export default function ShopByCategory() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-12 md:py-16 bg-white">
-      {/* عنوان القسم */}
       <div className="flex items-center justify-between mb-10">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
           Shop with Categories
@@ -103,9 +99,7 @@ export default function ShopByCategory() {
         )}
       </div>
 
-      {/* حاوية الـ Slider */}
       <div className="relative group">
-        {/* السهم الأيسر */}
         <button
           onClick={() => scroll("left")}
           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-5 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#FA8232] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#E57328] transition-colors opacity-0 md:group-hover:opacity-100 focus:opacity-100"
@@ -114,7 +108,6 @@ export default function ShopByCategory() {
           <ArrowLeft size={20} strokeWidth={2.5} />
         </button>
 
-        {/* شريط الفئات (Scroll Container) */}
         <div
           ref={scrollRef}
           className="flex items-center gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-2 
@@ -123,14 +116,9 @@ export default function ShopByCategory() {
           {categories.map((category) => (
             <Link
               key={category.id || category._id}
-              // ==========================================
-              // التعديل هنا: توجيه المستخدم لصفحة المنتجات
-              // مع إرسال اسم القسم كـ Query Parameter
-              // ==========================================
               to={`/products?category=${encodeURIComponent(category.name)}`}
               className="flex-none w-[180px] md:w-[200px] bg-white border border-gray-100 rounded-sm hover:border-[#FA8232] hover:shadow-md transition-all duration-300 snap-center p-5 flex flex-col items-center justify-between group/card cursor-pointer"
             >
-              {/* صورة الفئة */}
               <div className="w-full h-32 mb-4 flex items-center justify-center overflow-hidden">
                 <img
                   src={category.image}
@@ -143,7 +131,6 @@ export default function ShopByCategory() {
                 />
               </div>
 
-              {/* اسم الفئة */}
               <h3 className="text-gray-800 text-sm font-medium text-center group-hover/card:text-[#FA8232] transition-colors">
                 {category.name}
               </h3>
@@ -151,7 +138,6 @@ export default function ShopByCategory() {
           ))}
         </div>
 
-        {/* السهم الأيمن */}
         <button
           onClick={() => scroll("right")}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-5 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#FA8232] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#E57328] transition-colors opacity-0 md:group-hover:opacity-100 focus:opacity-100"

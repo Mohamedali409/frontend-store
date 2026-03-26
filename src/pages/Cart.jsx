@@ -17,7 +17,6 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // تحديد اتجاه السهم بناءً على اللغة (اختياري للجماليات)
   const isArabic = i18n.language === "ar";
 
   const getImageUrl = (imagePath) => {

@@ -54,7 +54,7 @@ export default function Products() {
   const topRef = useRef(null);
   const sliderRef = useRef(null);
 
-  // --- Debounce Effect for Prices ---
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedMin(minPrice);
@@ -64,7 +64,6 @@ export default function Products() {
     return () => clearTimeout(timer);
   }, [minPrice, maxPrice]);
 
-  // --- Fetching Categories ---
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -79,7 +78,6 @@ export default function Products() {
     fetchCategories();
   }, []);
 
-  // --- Fetching Main Products ---
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -253,7 +251,6 @@ export default function Products() {
     }
   };
 
-  // --- Helpers ---
   const getActiveCategoryName = () => {
     if (!activeCategory) return "";
     for (const mainCat of categoriesList) {
@@ -309,7 +306,6 @@ export default function Products() {
 
       <div className="flex flex-col flex-1 p-5">
         <span className="text-xs font-semibold text-orange-500 mb-2 uppercase tracking-wider line-clamp-1">
-          {/* هنا هنترجم اسم القسم اللي راجع من الداتابيز */}
           {t(product.categoryId?.name) || t("Products.product")}
         </span>
         <Link
@@ -369,7 +365,6 @@ export default function Products() {
       )}
 
       <div className="max-w-7xl mx-auto px-4 mt-8 flex flex-col lg:flex-row gap-8">
-        {/* --- Sidebar --- */}
         <aside className="w-full lg:w-[280px] flex-shrink-0 space-y-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-fit">
           <div>
             <h3 className="text-sm font-bold text-gray-900 uppercase mb-5 tracking-wider flex items-center gap-2">
@@ -399,7 +394,6 @@ export default function Products() {
                     <span
                       className={`text-sm font-bold transition-colors ${activeCategory === mainCat._id && activeCategoryType === "main" ? "text-orange-600" : "text-gray-800"}`}
                     >
-                      {/* الترجمة لاسم القسم */}
                       {t(mainCat.name)}
                     </span>
                   </label>
@@ -427,7 +421,6 @@ export default function Products() {
                           <span
                             className={`text-sm transition-colors ${activeCategory === subCat._id && activeCategoryType === "sub" ? "text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-900"}`}
                           >
-                            {/* الترجمة لاسم القسم الفرعي */}
                             {t(subCat.name)}
                           </span>
                         </label>
@@ -477,7 +470,6 @@ export default function Products() {
           </div>
         </aside>
 
-        {/* --- Main Content --- */}
         <main className="flex-1 overflow-hidden">
           <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <div className="relative w-full md:w-[400px]">
@@ -566,7 +558,6 @@ export default function Products() {
             </div>
           )}
 
-          {/* Stats */}
           <div className="mb-6 flex items-center justify-between text-sm text-gray-500 font-medium">
             <p>
               {t("Products.showing")}{" "}
@@ -583,7 +574,6 @@ export default function Products() {
             </p>
           </div>
 
-          {/* Products Grid */}
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(10)].map((_, i) => (
@@ -616,7 +606,6 @@ export default function Products() {
             </div>
           )}
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div
               className={`flex items-center justify-center gap-2 mt-14 mb-10 ${isRTL ? "flex-row-reverse" : ""}`}
@@ -667,7 +656,6 @@ export default function Products() {
             </div>
           )}
 
-          {/* --- Related Products Section --- */}
           {relatedProducts.length > 0 && (
             <div className="mt-16 pt-10 border-t border-gray-200">
               <div className="flex items-center justify-between mb-8">

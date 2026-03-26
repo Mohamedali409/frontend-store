@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthContext";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // ضفنا سطر الترجمة هنا
+import { useTranslation } from "react-i18next";
 
 export default function AuthPage() {
-  const { t, i18n } = useTranslation(); // استخراج الترجمة واللغة
-  const isRTL = i18n.language === "ar"; // تحديد لو اللغة عربي عشان الاتجاه
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   const { login, register: registerAuth, loadingAuth } = useAuth();
   const navigate = useNavigate();
@@ -65,7 +65,6 @@ export default function AuthPage() {
   };
 
   return (
-    // ضفنا dir عشان يقلب الصفحة يمين وشمال حسب اللغة
     <div
       className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
       dir={isRTL ? "rtl" : "ltr"}
@@ -125,7 +124,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Email Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t("Auth.email")}
@@ -151,7 +149,6 @@ export default function AuthPage() {
               )}
             </div>
 
-            {/* Password Field */}
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="block text-sm font-medium text-gray-700">
@@ -200,7 +197,6 @@ export default function AuthPage() {
               )}
             </div>
 
-            {/* Confirm Password Field - Only for Sign Up */}
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -242,7 +238,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Terms Checkbox - Only for Sign Up */}
             {!isLogin && (
               <div>
                 <div className="flex items-start mt-2">
@@ -278,7 +273,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loadingAuth}
@@ -295,7 +289,6 @@ export default function AuthPage() {
             </button>
           </form>
 
-          {/* Social Logins */}
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>

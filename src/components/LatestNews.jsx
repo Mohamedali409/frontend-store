@@ -53,7 +53,6 @@ export default function LatestNews() {
   return (
     <section className="w-full py-16 md:py-24 bg-[#F2F4F5]/30">
       <div className="max-w-7xl mx-auto px-4">
-        {/* العنوان الرئيسي مع خط ديكوري بسيط */}
         <div className="flex flex-col items-center mb-12">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             {t("LatestNews.title")}
@@ -67,7 +66,6 @@ export default function LatestNews() {
               key={news.id}
               className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group border border-gray-100"
             >
-              {/* صورة المقال مع تأثير التكبير */}
               <Link
                 to={`/blog/${news.id}`}
                 className="block relative h-64 overflow-hidden"
@@ -83,7 +81,6 @@ export default function LatestNews() {
               <div
                 className={`p-8 flex flex-col flex-grow ${isRTL ? "text-right" : "text-left"}`}
               >
-                {/* البيانات الوصفية (Meta Data) */}
                 <div
                   className={`flex flex-wrap items-center gap-y-2 gap-x-4 text-[13px] font-medium text-gray-500 mb-5 ${isRTL ? "flex-row-reverse" : ""}`}
                 >
@@ -103,7 +100,6 @@ export default function LatestNews() {
                   </div>
                 </div>
 
-                {/* العنوان */}
                 <Link
                   to={`/blog/${news.id}`}
                   className="hover:text-[#FA8232] transition-colors mb-4"
@@ -113,12 +109,10 @@ export default function LatestNews() {
                   </h3>
                 </Link>
 
-                {/* مقتطف النص */}
                 <p className="text-gray-500 text-sm leading-relaxed mb-8 line-clamp-3 font-medium">
                   {news.excerpt}
                 </p>
 
-                {/* زر إقرأ المزيد بشكل عصري */}
                 <div className={`mt-auto ${isRTL ? "ml-auto" : "mr-auto"}`}>
                   <Link
                     to={`/blog/${news.id}`}
@@ -134,7 +128,6 @@ export default function LatestNews() {
                         <ArrowRight size={18} className="text-[#FA8232]" />
                       )}
                     </span>
-                    {/* خط أنيميشن تحت الزر */}
                     <span className="absolute bottom-[-4px] left-0 w-0 h-[2px] bg-[#FA8232] transition-all duration-300 group-hover/btn:w-full"></span>
                   </Link>
                 </div>

@@ -83,7 +83,6 @@ export default function AuthProvider({ children }) {
     setToken(newToken);
     localStorage.setItem("token", newToken);
 
-    // مؤقتاً لحد ما نعمل Endpoint يجيب بيانات اليوزر بناءً على التوكن
     toast.success("Welcome back with Google!");
     setLoadingAuth(false);
   };
@@ -102,7 +101,7 @@ export default function AuthProvider({ children }) {
         login,
         register,
         logout,
-        handleGoogleCallback, // تم التمرير هنا
+        handleGoogleCallback,
       }}
     >
       {children}

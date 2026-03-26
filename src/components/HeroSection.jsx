@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-// الصور
 import XboxImg from "../assets/image/Xbox.png";
 import PlayStation5 from "../assets/image/PlayStation5.png";
 import NintendoSwitch from "../assets/image/NintendoSwitch.png";
@@ -14,7 +13,6 @@ export default function HeroSection() {
   const isRtl = i18n.language === "ar";
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // بيانات السلايدر باستخدام مفاتيح الترجمة
   const slidesData = [
     {
       id: 1,
@@ -51,13 +49,10 @@ export default function HeroSection() {
     },
   ];
 
-  const nextSlide = () => {
+  const nextSlide = () =>
     setCurrentSlide((prev) => (prev === slidesData.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
+  const prevSlide = () =>
     setCurrentSlide((prev) => (prev === 0 ? slidesData.length - 1 : prev - 1));
-  };
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 5000);
@@ -70,16 +65,32 @@ export default function HeroSection() {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInScale {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-15px); }
         }
+        
+        .animate-reveal { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+        .animate-scale { animation: fadeInScale 0.8s ease-out forwards; opacity: 0; }
         .animate-img { animation: float 4s ease-in-out infinite; }
+        
+        /* تأخيرات زمنية لظهور العناصر بالترتيب */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
       `}</style>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* 1. السلايدر الرئيسي */}
-        <div className="lg:col-span-2 bg-gradient-to-br from-[#F2F4F5] to-[#E5E7EB] rounded-[2rem] overflow-hidden relative min-h-[550px] sm:min-h-[500px] md:min-h-[450px] shadow-sm group">
+        <div className="lg:col-span-2 bg-gradient-to-br from-[#F2F4F5] to-[#E5E7EB] rounded-[2rem] overflow-hidden relative min-h-[550px] sm:min-h-[500px] md:min-h-[450px] shadow-sm group animate-scale">
           {slidesData.map((slide, index) => (
             <div
               key={slide.id}
@@ -89,26 +100,25 @@ export default function HeroSection() {
                   : `opacity-0 ${isRtl ? "translate-x-full" : "-translate-x-full"} z-0 pointer-events-none`
               }`}
             >
-              {/* النصوص */}
               <div
                 className={`w-full md:w-1/2 z-20 order-2 md:order-1 mt-8 md:mt-0 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`}
               >
                 <div
-                  className={`flex items-center justify-center gap-3 mb-4 ${isRtl ? "md:justify-start" : "md:justify-start"}`}
+                  className={`flex items-center justify-center gap-3 mb-4 animate-reveal delay-1 ${isRtl ? "md:justify-start" : "md:justify-start"}`}
                 >
                   <span className="w-8 h-1 bg-[#2DB2FF] rounded-full"></span>
                   <span className="text-xs font-black text-[#2DB2FF] tracking-[0.2em] uppercase">
                     {slide.tag}
                   </span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-5 leading-[1.15] tracking-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-5 leading-[1.15] tracking-tight animate-reveal delay-2">
                   {slide.title}
                 </h1>
-                <p className="text-sm md:text-base text-gray-600 mb-8 max-w-sm mx-auto md:mx-0 leading-relaxed font-medium">
+                <p className="text-sm md:text-base text-gray-600 mb-8 max-w-sm mx-auto md:mx-0 leading-relaxed font-medium animate-reveal delay-3">
                   {slide.description}
                 </p>
-                <button className="group/btn bg-[#FA8232] hover:bg-[#E5762B] text-white text-sm font-black px-8 py-4 rounded-xl flex items-center justify-center gap-3 transition-all hover:shadow-lg hover:shadow-orange-500/30 active:scale-95 mx-auto md:mx-0 uppercase tracking-wider">
-                  {t("hero.shop_now", "Shop Now")}
+                <button className="animate-reveal delay-4 group/btn bg-[#FA8232] hover:bg-[#E5762B] text-white text-sm font-black px-8 py-4 rounded-xl flex items-center justify-center gap-3 transition-all hover:shadow-lg hover:shadow-orange-500/30 active:scale-95 mx-auto md:mx-0 uppercase tracking-wider">
+                  {t("hero.shop_now")}
                   {isRtl ? (
                     <ArrowLeft
                       size={20}
@@ -123,16 +133,13 @@ export default function HeroSection() {
                 </button>
               </div>
 
-              {/* الصورة والسعر */}
-              <div className="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2">
+              <div className="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2 animate-scale delay-3">
                 <div className="relative w-full max-w-[280px] md:max-w-[90%] h-[250px] md:h-[350px] animate-img">
                   <img
                     src={slide.image}
                     alt={slide.title}
                     className="w-full h-full object-contain drop-shadow-2xl"
                   />
-
-                  {/* السعر - تغيير مكانه حسب اللغة */}
                   <div
                     className={`absolute -top-4 w-20 h-20 bg-white/80 backdrop-blur-md rounded-full flex flex-col items-center justify-center shadow-xl border border-white transform transition-transform hover:rotate-0 cursor-default ${isRtl ? "-left-2 md:top-4 md:-left-4 -rotate-12" : "-right-2 md:top-4 md:-right-4 rotate-12"}`}
                   >
@@ -145,7 +152,6 @@ export default function HeroSection() {
             </div>
           ))}
 
-          {/* أسهم التقليب - تعكس اتجاهها في العربي */}
           <button
             onClick={isRtl ? nextSlide : prevSlide}
             className={`absolute ${isRtl ? "right-4" : "left-4"} top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white hover:text-[#FA8232] shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300`}
@@ -158,32 +164,16 @@ export default function HeroSection() {
           >
             {isRtl ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
           </button>
-
-          {/* مؤشرات التقليب (Dots) - ضبط مكانها في العربي */}
-          <div
-            className={`absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-30 ${isRtl ? "md:right-14 md:translate-x-0" : "md:left-14 md:translate-x-0"}`}
-          >
-            {slidesData.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`transition-all duration-500 rounded-full ${currentSlide === index ? "w-8 h-2.5 bg-[#FA8232]" : "w-2.5 h-2.5 bg-gray-300"}`}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* 2. الكروت الجانبية */}
         <div className="lg:col-span-1 flex flex-col gap-5">
-          {/* الكارت الأول - Pixel */}
-          <div className="group bg-gradient-to-br from-[#191C1F] to-[#2d3238] rounded-[2rem] p-8 flex items-center justify-between relative overflow-hidden flex-1 min-h-[220px] cursor-pointer shadow-sm">
+          <div className="animate-reveal delay-3 group bg-gradient-to-br from-[#191C1F] to-[#2d3238] rounded-[2rem] p-8 flex items-center justify-between relative overflow-hidden flex-1 min-h-[220px] cursor-pointer shadow-sm">
             <div className="z-10 relative">
               <span className="text-[11px] font-black text-[#EBC80C] tracking-[0.2em] uppercase opacity-90">
-                {t("hero.summer_sale", "SUMMER SALES")}
+                {t("hero.summer_sale")}
               </span>
               <h3 className="text-white font-bold text-2xl md:text-3xl mt-2 tracking-tight leading-tight">
-                {t("hero.pixel.title", "New Google")} <br />{" "}
-                {t("hero.pixel.model", "Pixel 6 Pro")}
+                {t("hero.pixel.title")} <br /> {t("hero.pixel.model")}
               </h3>
               <button className="mt-5 text-[#FA8232] text-xs font-black flex items-center gap-2 group-hover:gap-3 transition-all uppercase">
                 {t("hero.shop_now")}{" "}
@@ -200,12 +190,11 @@ export default function HeroSection() {
             <div
               className={`absolute top-6 bg-[#EBC80C] text-black text-xs font-black px-4 py-2 shadow-lg ${isRtl ? "left-0 rounded-r-full" : "right-0 rounded-l-full"}`}
             >
-              29% {t("hero.off", "OFF")}
+              29% {t("hero.off")}
             </div>
           </div>
 
-          {/* الكارت الثاني - Xiaomi */}
-          <div className="group bg-white rounded-[2rem] p-8 flex items-center justify-between flex-1 min-h-[220px] border border-gray-100 hover:shadow-xl transition-all cursor-pointer">
+          <div className="animate-reveal delay-4 group bg-white rounded-[2rem] p-8 flex items-center justify-between flex-1 min-h-[220px] border border-gray-100 hover:shadow-xl transition-all cursor-pointer">
             <div className="w-5/12 h-36 relative">
               <img
                 src={smaiaImg}

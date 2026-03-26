@@ -66,7 +66,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* 2. Top Category */}
           <div className="lg:col-span-1">
             <h3
               className={`text-white font-bold text-sm tracking-widest uppercase mb-6 border-[#FA8232] ${isRTL ? "border-r-2 pr-3" : "border-l-2 pl-3"}`}
@@ -87,7 +86,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* 3. Quick Links */}
           <div className="lg:col-span-1">
             <h3
               className={`text-white font-bold text-sm tracking-widest uppercase mb-6 border-[#FA8232] ${isRTL ? "border-r-2 pr-3" : "border-l-2 pl-3"}`}
@@ -108,7 +106,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* 4. Apps & Tags */}
           <div className="lg:col-span-2 space-y-10">
             <div>
               <h3 className="text-white font-bold text-sm tracking-widest uppercase mb-6">
@@ -153,7 +150,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright */}
         <div
           className={`border-t border-gray-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-6 ${isRTL ? "md:flex-row-reverse" : ""}`}
         >

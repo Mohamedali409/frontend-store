@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-// =========================================
-// 1. البيانات الوهمية (Mock Data)
-// =========================================
-// المنتجات زي ما هي بدون تغيير
 const products = [
   {
     id: 1,
@@ -87,9 +83,6 @@ const products = [
   },
 ];
 
-// =========================================
-// 2. مكون التقييم (النجوم)
-// =========================================
 const StarRating = ({ rating }) => {
   return (
     <div className="flex gap-[1px]">
@@ -108,14 +101,10 @@ const StarRating = ({ rating }) => {
   );
 };
 
-// =========================================
-// 3. المكون الرئيسي (Computer Accessories)
-// =========================================
 export default function ComputerAccessories() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  // تعريف التبويبات بـ ID ثابت عشان المقارنة في الـ State متضربش
   const tabs = [
     { id: "all", label: "Accessories.tabs.all" },
     { id: "keyboard", label: "Accessories.tabs.keyboard" },
@@ -128,7 +117,6 @@ export default function ComputerAccessories() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-8 md:py-12 bg-white">
-      {/* Header & Tabs */}
       <div
         className={`flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4 border-b border-gray-100 pb-2 ${isRTL ? "text-right" : "text-left"}`}
       >
@@ -164,7 +152,6 @@ export default function ComputerAccessories() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Left Side: Products Grid */}
         <div className="lg:col-span-3 border border-gray-200 bg-white grid grid-cols-2 md:grid-cols-4">
           {products.map((product, index) => (
             <div
@@ -234,9 +221,7 @@ export default function ComputerAccessories() {
           ))}
         </div>
 
-        {/* Right Side: Banners */}
         <div className="lg:col-span-1 flex flex-col gap-6">
-          {/* Top Banner */}
           <div className="bg-[#FBE8A4] rounded-sm p-6 flex flex-col items-center text-center h-1/2 justify-center hover:-translate-y-1 transition-transform duration-300">
             <img
               src="https://images.unsplash.com/photo-1590658268037-6f116412ae8a?auto=format&fit=crop&q=80&w=200"
@@ -266,7 +251,6 @@ export default function ComputerAccessories() {
             </Link>
           </div>
 
-          {/* Bottom Banner */}
           <div className="bg-[#12415D] rounded-sm p-6 flex flex-col items-center text-center h-1/2 justify-center hover:-translate-y-1 transition-transform duration-300">
             <span className="bg-white/10 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider mb-4 rounded-sm">
               {t("Accessories.banners.summer_sales")}
