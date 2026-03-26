@@ -111,12 +111,4 @@ Open a Pull Request
 📝 License
 Distributed under the MIT License. See LICENSE for more information.
 
-Built with ❤️ by [Your Name/Company]
-
-### لمسات أخيرة لك:
-
-- لا تنسَ تغيير الروابط الوهمية مثل `your-username/your-repo-name` إلى روابط حسابك الحقيقية على GitHub.
-- في سطر _Built with_, يمكنك كتابة اسمك أو اسم فريقك.
-- يفضل دائماً التقاط صورة لشاشة الموقع (Screenshot) أو تسجيل فيديو قصير (GIF) وإضافته في بداية الملف تحت العنوان مباشرة ليعطي فكرة سريعة عن شكل المشروع للزوار.
-
-هل أنت جاهز لرفع المشروع على GitHub، أم تحتاج مساعدة في أوامر الـ Git؟
+Built with ❤️ by [Mohamed Ail / (AlyShope)]
