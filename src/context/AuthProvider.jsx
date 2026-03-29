@@ -49,7 +49,6 @@ export default function AuthProvider({ children }) {
       });
 
       if (response.data) {
-        // فكينا الكومنتس من هنا عشان نحفظ التوكن
         const newToken = response.data.token;
         const userData = response.data.user;
 

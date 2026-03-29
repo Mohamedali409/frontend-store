@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
-import { useTranslation } from "react-i18next"; // استيراد الترجمة
+import { useTranslation } from "react-i18next";
 import {
   User,
   Mail,
@@ -60,8 +60,8 @@ const InfoRow = ({ icon: Icon, label, value, notProvidedText }) => (
 
 export default function Profile() {
   const { user, logout } = useAuth();
-  const { t, i18n } = useTranslation(); // تهيئة الترجمة
-  const isRtl = i18n.language === "ar"; // لمعرفة الاتجاه لو احتجناه
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar";
 
   const containerVariants = {
     hidden: { opacity: 0 },

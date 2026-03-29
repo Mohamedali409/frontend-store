@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
-import api from "../utils/api"; // استيراد الـ axios instance
+import api from "../utils/api";
 
 export default function DataProvider({ children }) {
   const [products, setProducts] = useState([]);

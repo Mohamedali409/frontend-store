@@ -13,7 +13,6 @@ import Support from "../pages/Support";
 import AuthSuccess from "../pages/AuthSuccess";
 import NeedHelp from "../pages/NeedHelp";
 
-// تأكد إن الاسم هنا "router" سمول
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -39,7 +38,7 @@ export const router = createBrowserRouter([
 
       {
         path: "auth/callback",
-        element: <AuthSuccess />, // شيلنا الـ AuthRoute والكومنت
+        element: <AuthSuccess />,
       },
 
       {

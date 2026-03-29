@@ -8,9 +8,8 @@
   scrollbar-width: none;
 }
 
-/* src/index.css */
 #nprogress .bar {
-  background: #fa8232 !important; /* لون البرتقالي بتاعك */
+  background: #fa8232 !important;
   height: 3px !important;
 }
 

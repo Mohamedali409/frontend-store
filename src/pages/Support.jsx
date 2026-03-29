@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export default function Support() {
-  const { t } = useTranslation(); // تهيئة الترجمة
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
