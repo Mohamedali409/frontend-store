@@ -19,11 +19,17 @@ export default function Cart() {
 
   const isArabic = i18n.language === "ar";
 
+  // ✅ التعديل هنا لضمان عمل الصور بمسافات ومنع الدبل سلاش ✅
   const getImageUrl = (imagePath) => {
     if (!imagePath)
       return "https://placehold.co/150x150/f3f4f6/6b7280?text=No+Image";
     if (imagePath.startsWith("http")) return imagePath;
-    return `http://localhost:3000/${imagePath}`;
+
+    // التأكد من عدم وجود "دبل سلاش" في الرابط
+    const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+
+    // استخدام encodeURI لتحويل المسافات لـ %20
+    return encodeURI(`http://localhost:3000${cleanPath}`);
   };
 
   const fetchCart = async () => {

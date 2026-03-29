@@ -26,11 +26,17 @@ export default function ProductDetails() {
   const [activeTab, setActiveTab] = useState("description");
   const [toast, setToast] = useState(null);
 
+  // ✅ الجزء المُعدل بالكامل لتشغيل الصور بمسافات أو بدون ✅
   const getImageUrl = (imagePath) => {
     if (!imagePath)
       return "https://placehold.co/600x400/f3f4f6/6b7280?text=No+Image";
     if (imagePath.startsWith("http")) return imagePath;
-    return `http://localhost:3000/${imagePath}`;
+
+    // التأكد من عدم وجود "دبل سلاش" في الرابط
+    const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+
+    // استخدام encodeURI لتحويل المسافات لـ %20
+    return encodeURI(`http://localhost:3000${cleanPath}`);
   };
 
   const showToast = (message) => {

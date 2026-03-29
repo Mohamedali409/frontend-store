@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useTranslation } from "react-i18next"; // 👈 استدعاء مكتبة الترجمة
+import { useTranslation } from "react-i18next";
 import {
   Search,
   ChevronDown,
@@ -20,19 +20,26 @@ import {
 const fallbackProducts = [];
 
 export default function Products() {
-  const { t, i18n } = useTranslation(); // 👈 تفعيل الترجمة
-  const isRTL = i18n.language === "ar"; // 👈 عشان نعرف لو اللغة عربي نظبط اتجاهات بعض الحاجات
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
-  // --- States for Filters & Pagination ---
-  const [activeCategory, setActiveCategory] = useState("");
-  const [activeCategoryType, setActiveCategoryType] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryIdFromUrl = searchParams.get("category");
+  const subcategoryIdFromUrl = searchParams.get("subcategory");
+
+  const [activeCategory, setActiveCategory] = useState(
+    categoryIdFromUrl || subcategoryIdFromUrl || "",
+  );
+  const [activeCategoryType, setActiveCategoryType] = useState(
+    categoryIdFromUrl ? "main" : subcategoryIdFromUrl ? "sub" : "",
+  );
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sortBy, setSortBy] = useState("latest");
 
-  // --- Pagination States ---
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -40,20 +47,32 @@ export default function Products() {
   const [debouncedMin, setDebouncedMin] = useState("");
   const [debouncedMax, setDebouncedMax] = useState("");
 
-  // --- States for API & UI ---
   const [categoriesList, setCategoriesList] = useState([]);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
-  // --- States for Related Products ---
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(false);
 
-  // --- Refs ---
   const topRef = useRef(null);
   const sliderRef = useRef(null);
 
+  useEffect(() => {
+    const catId = searchParams.get("category");
+    const subCatId = searchParams.get("subcategory");
+
+    if (catId) {
+      setActiveCategory(catId);
+      setActiveCategoryType("main");
+    } else if (subCatId) {
+      setActiveCategory(subCatId);
+      setActiveCategoryType("sub");
+    } else {
+      setActiveCategory("");
+      setActiveCategoryType("");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -126,7 +145,6 @@ export default function Products() {
     currentPage,
   ]);
 
-  // --- Fetching Related Products ---
   useEffect(() => {
     const fetchRelatedProducts = async () => {
       setIsLoadingRelated(true);
@@ -159,7 +177,6 @@ export default function Products() {
     fetchRelatedProducts();
   }, [activeCategory, activeCategoryType]);
 
-  // --- Scroll to Top on Pagination ---
   useEffect(() => {
     if (topRef.current && !isLoading) {
       window.scrollTo({
@@ -169,7 +186,6 @@ export default function Products() {
     }
   }, [currentPage, isLoading]);
 
-  // --- Handlers ---
   const handleSearchSubmit = (e) => {
     if (e.key === "Enter") {
       setSearchQuery(searchInput);
@@ -185,6 +201,7 @@ export default function Products() {
     setMinPrice("");
     setMaxPrice("");
     setCurrentPage(1);
+    setSearchParams({});
   };
 
   const showToast = (message) => {
@@ -266,10 +283,12 @@ export default function Products() {
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
     if (imagePath.startsWith("http")) return imagePath;
-    return `http://localhost:3000/${imagePath}`;
+
+    const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+
+    return encodeURI(`http://localhost:3000${cleanPath}`);
   };
 
-  // --- Product Card Component ---
   const ProductCard = ({ product, isCompact = false }) => (
     <div
       className={`group flex flex-col h-full bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 relative ${isCompact ? "min-w-[260px] max-w-[260px]" : ""}`}
@@ -376,13 +395,13 @@ export default function Products() {
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <div
                       onClick={() => {
-                        setActiveCategory(
-                          activeCategory === mainCat._id ? "" : mainCat._id,
-                        );
-                        setActiveCategoryType(
-                          activeCategory === mainCat._id ? "" : "main",
-                        );
+                        const newCatId =
+                          activeCategory === mainCat._id ? "" : mainCat._id;
+                        setActiveCategory(newCatId);
+                        setActiveCategoryType(newCatId ? "main" : "");
                         setCurrentPage(1);
+                        if (newCatId) setSearchParams({ category: newCatId });
+                        else setSearchParams({});
                       }}
                       className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${activeCategory === mainCat._id && activeCategoryType === "main" ? "border-orange-500 bg-orange-500" : "border-gray-300 group-hover:border-orange-400"}`}
                     >
@@ -408,13 +427,14 @@ export default function Products() {
                         >
                           <div
                             onClick={() => {
-                              setActiveCategory(
-                                activeCategory === subCat._id ? "" : subCat._id,
-                              );
-                              setActiveCategoryType(
-                                activeCategory === subCat._id ? "" : "sub",
-                              );
+                              const newSubId =
+                                activeCategory === subCat._id ? "" : subCat._id;
+                              setActiveCategory(newSubId);
+                              setActiveCategoryType(newSubId ? "sub" : "");
                               setCurrentPage(1);
+                              if (newSubId)
+                                setSearchParams({ subcategory: newSubId });
+                              else setSearchParams({});
                             }}
                             className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${activeCategory === subCat._id && activeCategoryType === "sub" ? "border-orange-500 bg-orange-500" : "border-gray-300 group-hover:border-orange-400"}`}
                           />
@@ -528,6 +548,7 @@ export default function Products() {
                     onClick={() => {
                       setActiveCategory("");
                       setActiveCategoryType("");
+                      setSearchParams({});
                     }}
                     className="hover:text-red-500"
                   >

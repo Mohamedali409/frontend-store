@@ -48,11 +48,14 @@ export default function AuthProvider({ children }) {
         confirmPassword,
       });
 
-      if (response.data.token) {
+      if (response.data) {
+        // فكينا الكومنتس من هنا عشان نحفظ التوكن
         const newToken = response.data.token;
         const userData = response.data.user;
+
         setToken(newToken);
         setUser(userData);
+
         localStorage.setItem("token", newToken);
         localStorage.setItem("user", JSON.stringify(userData));
       }
@@ -77,7 +80,6 @@ export default function AuthProvider({ children }) {
     toast.info("Logged out successfully");
   };
 
-  // الدالة الجديدة الخاصة بحفظ توكن جوجل
   const handleGoogleCallback = (newToken) => {
     setLoadingAuth(true);
     setToken(newToken);

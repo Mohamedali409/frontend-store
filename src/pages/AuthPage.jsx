@@ -102,7 +102,6 @@ export default function AuthPage() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Name Field - Only for Sign Up */}
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
