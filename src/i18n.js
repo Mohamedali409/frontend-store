@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next";
 const resources = {
   en: {
     translation: {
-      // النصوص الأساسية
+      //
       welcome_msg: "Welcome to Aly Shope online store!",
       track_order: "Track Order",
       need_help: "Need Help",
@@ -24,7 +24,7 @@ const resources = {
       my_account: "My Account",
       whatsapp_contact: "Contact us on Whatsapp",
 
-      // الأقسام (Categories)
+      // (Categories)
       "Computer & Laptop": "Computer & Laptop",
       "Smartphones & Tablets": "Smartphones & Tablets",
       "Camera & Photo": "Camera & Photo",
@@ -32,7 +32,7 @@ const resources = {
       "Wearable Electronics": "Wearable Electronics",
       "Gaming Console": "Gaming Console",
 
-      // الأقسام الفرعية (Subcategories)
+      //(Subcategories)
       MacBooks: "MacBooks",
       "Gaming Laptops": "Gaming Laptops",
       Desktops: "Desktops",
@@ -70,7 +70,7 @@ const resources = {
       "Video Games": "Video Games",
       "Gaming Chairs": "Gaming Chairs",
 
-      // نصوص صفحة تسجيل الدخول (AuthPage)
+      // (AuthPage)
       Auth: {
         signIn: "Sign In",
         signUp: "Sign Up",
@@ -185,7 +185,6 @@ const resources = {
         securitySettings: "Security Settings",
       },
 
-      // ====== الإضافات الخاصة بالصفحات الأربعة السابقة ======
       Cart: {
         shopping_cart: "Shopping Cart",
         loading_cart: "Loading Cart...",
@@ -233,7 +232,6 @@ const resources = {
           "Every product is vetted for quality to ensure you get exactly what you pay for.",
       },
 
-      // ====== الإضافات الجديدة (NotFound, NeedHelp, ProductDetails) ======
       notFound: {
         title: "404, Page not found",
         description:
@@ -280,8 +278,8 @@ const resources = {
       },
       product: {
         addedToCart: "Added to cart! 🛒",
-        loginFirst: "Please login first to add items! ⚠️",
-        errorAdding: "Failed to add product ❌",
+        loginFirst: "Please login first to add items! ",
+        errorAdding: "Failed to add product ",
         loading: "Loading Product...",
         notFound: "Product not found!",
         category: "Category:",
@@ -388,7 +386,6 @@ const resources = {
   },
   ar: {
     translation: {
-      // النصوص الأساسية
       welcome_msg: "مرحباً بك في متجر علي شوب الإلكتروني!",
       track_order: "تتبع طلبك",
       need_help: "تحتاج مساعدة؟",
@@ -408,7 +405,7 @@ const resources = {
       my_account: "حسابي",
       whatsapp_contact: "تواصل معنا واتساب",
 
-      // الأقسام (Categories) مترجمة
+      // (Categories)
       "Computer & Laptop": "كمبيوتر ولابتوب",
       "Smartphones & Tablets": "هواتف ذكية وتابلت",
       "Camera & Photo": "كاميرات وتصوير",
@@ -416,7 +413,7 @@ const resources = {
       "Wearable Electronics": "إلكترونيات قابلة للارتداء",
       "Gaming Console": "أجهزة ألعاب",
 
-      // الأقسام الفرعية (Subcategories) مترجمة
+      // (Subcategories)
       MacBooks: "أجهزة ماك بوك",
       "Gaming Laptops": "لابتوب جيمنج",
       Desktops: "كمبيوتر مكتبي",
@@ -454,7 +451,7 @@ const resources = {
       "Video Games": "ألعاب فيديو",
       "Gaming Chairs": "كراسي جيمنج",
 
-      // نصوص صفحة تسجيل الدخول (AuthPage) مترجمة
+      // (AuthPage)
       Auth: {
         signIn: "تسجيل الدخول",
         signUp: "إنشاء حساب",
@@ -572,7 +569,6 @@ const resources = {
         product: "منتج",
       },
 
-      // ====== الإضافات الخاصة بالصفحات الأربعة السابقة ======
       Cart: {
         shopping_cart: "عربة التسوق",
         loading_cart: "جاري تحميل السلة...",
@@ -656,8 +652,8 @@ const resources = {
       },
       product: {
         addedToCart: "تمت الإضافة للسلة! 🛒",
-        loginFirst: "يرجى تسجيل الدخول أولاً لإضافة منتجات! ⚠️",
-        errorAdding: "فشل في إضافة المنتج ❌",
+        loginFirst: "يرجى تسجيل الدخول أولاً لإضافة منتجات! ",
+        errorAdding: "فشل في إضافة المنتج ",
         loading: "جاري تحميل المنتج...",
         notFound: "المنتج غير موجود!",
         category: "القسم:",

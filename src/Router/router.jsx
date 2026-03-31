@@ -12,6 +12,7 @@ import About from "../pages/About";
 import Support from "../pages/Support";
 import AuthSuccess from "../pages/AuthSuccess";
 import NeedHelp from "../pages/NeedHelp";
+import AdminQuickAdd from "../pages/Admin/AdminQuickAdd";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Cart />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "admin/add",
+        element: (
+          <ProtectedRoute>
+            <AdminQuickAdd />
           </ProtectedRoute>
         ),
       },

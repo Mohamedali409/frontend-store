@@ -82,7 +82,6 @@ export default function HeroSection() {
         .animate-scale { animation: fadeInScale 0.8s ease-out forwards; opacity: 0; }
         .animate-img { animation: float 4s ease-in-out infinite; }
         
-        /* تأخيرات زمنية لظهور العناصر بالترتيب */
         .delay-1 { animation-delay: 0.2s; }
         .delay-2 { animation-delay: 0.4s; }
         .delay-3 { animation-delay: 0.6s; }

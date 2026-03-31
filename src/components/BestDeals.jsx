@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Heart, Eye, Star, ArrowRight, X } from "lucide-react";
+import K_UHD_LED_Smart_TV_with_Chromecast_Built from "../assets/image/BestDeals/4K_UHD_LED_Smart_TV_with_Chromecast_Built-in.png";
+import Barrel_Carburetor_Carb from "../assets/image/BestDeals/Barrel_Carburetor_Carb.png";
+import Bose_Sport_Earbuds_Wireless from "../assets/image/BestDeals/Bose_Sport_Earbuds_Wireless.png";
+import Dell_Optiplex from "../assets/image/BestDeals/Dell_Optiplex.png";
+import JBL_FLIP_4 from "../assets/image/BestDeals/JBL_FLIP_4.png";
+import Portable_Wshing_Machine from "../assets/image/BestDeals/Portable_Wshing_Machine.png";
+import Simple_Mobile from "../assets/image/BestDeals/Simple_Mobile.png";
+import Sony_DSCHX8 from "../assets/image/BestDeals/Sony_DSCHX8.png";
+import Xbox_Series from "../assets/image/BestDeals/Xbox_Series.png";
 
 const CountdownTimer = ({ targetDateString }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -57,8 +66,7 @@ const featuredProduct = {
   reviews: "52,677",
   discount: "32% OFF",
   hot: true,
-  image:
-    "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&q=80&w=600",
+  image: Xbox_Series,
 };
 
 const smallProducts = [
@@ -67,15 +75,13 @@ const smallProducts = [
     name: "Bose Sport Earbuds - Wireless Earphones",
     price: 2300,
     soldOut: true,
-    image:
-      "https://images.unsplash.com/photo-1590658268037-6f116412ae8a?auto=format&fit=crop&q=80&w=400",
+    image: Bose_Sport_Earbuds_Wireless,
   },
   {
     id: "2",
     name: "Simple Mobile 4G LTE Prepaid Smartphone",
     price: 220,
-    image:
-      "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?auto=format&fit=crop&q=80&w=400",
+    image: Simple_Mobile,
   },
   {
     id: "3",
@@ -83,38 +89,33 @@ const smallProducts = [
     price: 150,
     oldPrice: 865,
     discount: "19% OFF",
-    image:
-      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=400",
+    image: K_UHD_LED_Smart_TV_with_Chromecast_Built,
   },
   {
     id: "4",
     name: "Sony High Zoom Point & Shoot Camera",
     price: 1200,
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400",
+    image: Sony_DSCHX8,
   },
   {
     id: "5",
     name: "Dell Optiplex 7000x7480 All-in-One Computer",
     price: 299,
-    image:
-      "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=400",
+    image: Dell_Optiplex,
   },
   {
     id: "6",
     name: "Portable Washing Machine, 11lbs capacity",
     price: 70,
     oldPrice: 865.99,
-    image:
-      "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&q=80&w=400",
+    image: Portable_Wshing_Machine,
   },
   {
     id: "7",
     name: "2-Barrel Carburetor Carb 2100 Engine",
     price: 160,
     hot: true,
-    image:
-      "https://images.unsplash.com/photo-1587202372616-b43abea06c2a?auto=format&fit=crop&q=80&w=400",
+    image: Barrel_Carburetor_Carb,
   },
   {
     id: "8",
@@ -122,8 +123,7 @@ const smallProducts = [
     price: 250,
     oldPrice: 360,
     discount: "32% OFF",
-    image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&q=80&w=400",
+    image: JBL_FLIP_4,
   },
 ];
 

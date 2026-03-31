@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import api from "../utils/api"; // تأكد إن مسار الملف ده صح عندك
+import api from "../utils/api";
 
-// استيراد الصور المحلية
 import Accessories from "../assets/image/Category/Accessories.png";
 import CameraPhoto from "../assets/image/Category/Camera & Photo.png";
 import ComputerAndLaptop from "../assets/image/Category/Computer & Laptop.png";
@@ -11,8 +10,6 @@ import Headphones from "../assets/image/Category/Headphones.png";
 import SmartPhone from "../assets/image/Category/SmartPhone.png";
 import TVHomes from "../assets/image/Category/TV & Homes.png";
 
-// مصفوفة البيانات البديلة (Fallback) في حالة فشل السيرفر
-// تم استخدام جميع الصور المستوردة لضمان عرض جميع الأقسام
 const fallbackCategories = [
   {
     id: 1,
@@ -49,28 +46,23 @@ const fallbackCategories = [
 export default function ShopByCategory() {
   const scrollRef = useRef(null);
 
-  // بدأنا بمصفوفة فاضية عشان منعملش تشتيت للمستخدم
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // بنكلم الـ Backend هنا
         const response = await api.get("/category");
 
-        // لو الـ Backend مرجع داتا صح، بنحطها في الـ State
         const fetchedData = response.data.categories || response.data;
 
         if (fetchedData && fetchedData.length > 0) {
           setCategories(fetchedData);
         } else {
-          // لو الـ Backend رجع مصفوفة فاضية
           setCategories(fallbackCategories);
         }
       } catch (error) {
         console.error("Error fetching categories, using fallback:", error);
-        // لو السيرفر واقع، بنعرض الداتا الوهمية
         setCategories(fallbackCategories);
       } finally {
         setIsLoading(false);
@@ -96,7 +88,6 @@ export default function ShopByCategory() {
       </div>
 
       <div className="relative group">
-        {/* أزرار السكرول تظهر فقط لو الداتا حملت */}
         {!isLoading && (
           <button
             onClick={() => scroll("left")}
@@ -112,7 +103,7 @@ export default function ShopByCategory() {
                      [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {isLoading
-            ? // ⏳ حالة التحميل: عرض مربعات رمادية (Skeleton Loading)
+            ? //
               Array.from({ length: 6 }).map((_, idx) => (
                 <div
                   key={idx}
@@ -122,8 +113,7 @@ export default function ShopByCategory() {
                   <div className="w-3/4 h-4 bg-gray-200 rounded-sm"></div>
                 </div>
               ))
-            : // ✅ حالة النجاح: عرض الأقسام الحقيقية
-              categories.map((category) => (
+            : categories.map((category) => (
                 <Link
                   key={category.id || category._id}
                   to={`/products?category=${encodeURIComponent(category.name)}`}

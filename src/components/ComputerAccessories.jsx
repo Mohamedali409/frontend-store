@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Xiaomi_True_Wireless_Earbuds from "../assets/image/Home/ComputerAccessories/Xiaomi_True_Wireless_Earbuds.png";
+
+import webar from "../assets/image/Computer Accessories/a5935e4ae865aea09c3021d056c99782b3748bc2 (2).jpg";
+import Amazon_Basics_High from "../assets/image/Computer Accessories/Amazon_Basics_High-Speed.png";
+import Dell_Optiplex_7000x7480 from "../assets/image/Computer Accessories/Dell_Optiplex_7000x7480.png";
+import K_UHD_LED_Smart_TV from "../assets/image/Computer Accessories/K_UHD_LED_Smart_TV.png";
+import Polaroid_57 from "../assets/image/Computer Accessories/Polaroid_57-Inch.png";
+import Portable_Wshing from "../assets/image/Computer Accessories/Portable_Wshing.png";
+import Samsung_Electronics_Samsung_Galexy_S21_5G from "../assets/image/Computer Accessories/Samsung_Electronics_Samsung_Galexy_S21_5G.png";
+import TOZO_T6_True_Wireless from "../assets/image/Computer Accessories/TOZO_T6_True_Wireless.png";
+import Wired_Over_Ear_Gaming from "../assets/image/Computer Accessories/Wired_Over_Ear_Gaming.png";
 
 const products = [
   {
@@ -11,8 +22,7 @@ const products = [
     rating: 4,
     reviews: 994,
     badge: { text: "BEST DEALS", color: "bg-[#2DB2FF]" },
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300",
+    image: Amazon_Basics_High,
   },
   {
     id: 2,
@@ -20,8 +30,7 @@ const products = [
     price: 80,
     rating: 5,
     reviews: 798,
-    image:
-      "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=300",
+    image: Portable_Wshing,
   },
   {
     id: 3,
@@ -30,8 +39,7 @@ const products = [
     rating: 5,
     reviews: 600,
     badge: { text: "HOT", color: "bg-[#EF5151]" },
-    image:
-      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=300",
+    image: TOZO_T6_True_Wireless,
   },
   {
     id: 4,
@@ -39,8 +47,7 @@ const products = [
     price: 250,
     rating: 4,
     reviews: 492,
-    image:
-      "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=300",
+    image: Dell_Optiplex_7000x7480,
   },
   {
     id: 5,
@@ -48,8 +55,7 @@ const products = [
     price: 2300,
     rating: 4,
     reviews: 740,
-    image:
-      "https://images.unsplash.com/photo-1555274175-6cbf6f3b137b?auto=format&fit=crop&q=80&w=300",
+    image: Samsung_Electronics_Samsung_Galexy_S21_5G,
   },
   {
     id: 6,
@@ -58,8 +64,7 @@ const products = [
     rating: 4,
     reviews: 556,
     badge: { text: "SALE", color: "bg-[#2DB2FF]" },
-    image:
-      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=300",
+    image: K_UHD_LED_Smart_TV,
   },
   {
     id: 7,
@@ -67,8 +72,7 @@ const products = [
     price: 1500,
     rating: 4,
     reviews: 536,
-    image:
-      "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=300",
+    image: Wired_Over_Ear_Gaming,
   },
   {
     id: 8,
@@ -78,8 +82,7 @@ const products = [
     rating: 3,
     reviews: 423,
     badge: { text: "25% OFF", color: "bg-[#F3DE6D]" },
-    image:
-      "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&q=80&w=300",
+    image: Polaroid_57,
   },
 ];
 
@@ -220,13 +223,13 @@ export default function ComputerAccessories() {
             </div>
           ))}
         </div>
-
+        {/* dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           <div className="bg-[#FBE8A4] rounded-sm p-6 flex flex-col items-center text-center h-1/2 justify-center hover:-translate-y-1 transition-transform duration-300">
             <img
-              src="https://images.unsplash.com/photo-1590658268037-6f116412ae8a?auto=format&fit=crop&q=80&w=200"
+              src={Xiaomi_True_Wireless_Earbuds}
               alt="Earbuds"
-              className="w-24 h-24 object-contain mb-4 mix-blend-multiply"
+              className="w-50 h-24 object-contain mb-4 mix-blend-multiply"
             />
             <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
               {t("Accessories.banners.xiaomi_title")}
